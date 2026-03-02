@@ -1,7 +1,7 @@
 # 🌿 CoopConnect AI
 
 ## 🌿 Qui sommes-nous ?
-Nous sommes une équipe d’étudiants de **MIAGE IA2 (2025–2026)** – **Université Côte d’Azur – EMSI**, dans le cadre du module **Projet de création d’entreprise**.
+Nous sommes une équipe d’étudiants de **MIAGE (2025–2026)** – **Université Côte d’Azur – EMSI**, dans le cadre du module **Projet de création d’entreprise**.
 
 ## 🌿 Membres du groupe
 
