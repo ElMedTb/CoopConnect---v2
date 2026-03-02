@@ -1,18 +1,41 @@
+<div style="color:#1B8F3A">
+
 # CoopConnect AI
 
+</div>
+
+<div style="color:#1B8F3A">
+
 ## Qui sommes-nous ?
-Nous sommes une équipe d’étudiants de **MIAGE  (2025–2026)** – **Université Côte d’Azur – EMSI**, dans le cadre du module **Projet de création d’entreprise**.
+
+</div>
+
+Nous sommes une équipe d’étudiants de **MIAGE IA2 (2025–2026)** – **Université Côte d’Azur – EMSI**, dans le cadre du module **Projet de création d’entreprise**.
+
+<div style="color:#1B8F3A">
 
 ## Membres du groupe
+
+</div>
+
+<div align="center">
 
 | Membre | Option |
 |---|---|
 | Bendahou Saad | IA |
 | Nyazi Walid | IA |
 | Qejiou Salah-Eddine | IA |
+| Tqejiou Salah-Eddine | IA |
 | Tabrani El Mehdi | MBDS |
 
+</div>
+
+<div style="color:#1B8F3A">
+
 ## Quel est notre projet ?
+
+</div>
+
 **CoopConnect AI** est une plateforme intelligente qui **encourage la coopération** entre différents acteurs (personnes, entreprises, organisations, etc.) afin d’optimiser leurs échanges et favoriser l’économie circulaire.
 
 La plateforme s’appuie sur l’intelligence artificielle pour :
