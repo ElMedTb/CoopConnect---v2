@@ -1,0 +1,2 @@
+-- Données de démonstration gérées par DataSeeder.java (profil dev)
+-- Ne pas ajouter d'INSERT ici — utiliser DataSeeder.java
