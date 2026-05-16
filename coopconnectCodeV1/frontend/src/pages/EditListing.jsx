@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { listingsApi } from '../api/listings'
 import { ArrowLeft, AlertCircle, CheckCircle, Trash2 } from 'lucide-react'
+import LocationPicker from '../components/listings/LocationPicker'
 
 const CATEGORIES = [
   { value: 'ELECTRONICS', label: 'Électronique' },
@@ -98,13 +99,17 @@ export default function EditListing() {
     }
   }
 
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
+
   const handleDelete = async () => {
-    if (!window.confirm('Supprimer définitivement cette annonce ?')) return
+    setDeleteError('')
     try {
       await listingsApi.remove(id)
       navigate('/listings/my')
     } catch {
-      alert('Erreur lors de la suppression.')
+      setShowDeleteConfirm(false)
+      setDeleteError('Erreur lors de la suppression. Réessayez.')
     }
   }
 
@@ -138,13 +143,21 @@ export default function EditListing() {
             <ArrowLeft className="w-3.5 h-3.5" />
             Retour à l'annonce
           </Link>
-          <button
-            onClick={handleDelete}
-            className="flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 transition-colors"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            Supprimer
-          </button>
+          {showDeleteConfirm ? (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-red-600 font-medium">Confirmer ?</span>
+              <button onClick={handleDelete} className="text-xs px-2 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors">Oui</button>
+              <button onClick={() => { setShowDeleteConfirm(false); setDeleteError('') }} className="text-xs px-2 py-1 rounded border border-stone-200 text-stone-600 hover:bg-stone-50 transition-colors">Non</button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+              Supprimer
+            </button>
+          )}
         </div>
 
         <h1 className="page-header mb-1">Modifier l'annonce</h1>
@@ -241,16 +254,20 @@ export default function EditListing() {
           )}
 
           {/* Location */}
-          <div>
-            <label className="label">Localisation</label>
-            <input
-              className="input"
-              type="text"
-              value={form.locationText}
-              onChange={e => set('locationText', e.target.value)}
-              placeholder="Ex : Casablanca, Ain Diab"
-            />
-          </div>
+          {deleteError && (
+            <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {deleteError}
+            </div>
+          )}
+          <LocationPicker
+            latitude={form.latitude}
+            longitude={form.longitude}
+            locationText={form.locationText}
+            onChange={({ latitude, longitude, locationText }) => {
+              setForm(p => ({ ...p, latitude, longitude, locationText }))
+              setError('')
+            }}
+          />
 
           {/* Delivery */}
           <div className="space-y-2">

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { MapPin, Clock, ArrowRight } from 'lucide-react'
+import { MapPin, ArrowRight } from 'lucide-react'
 
 const CATEGORY_LABELS = {
   ELECTRONICS: 'Électronique',
@@ -35,17 +35,6 @@ const CONDITION_LABELS = {
   GOOD: 'Bon état',
   FAIR: 'Correct',
   POOR: 'Passable',
-}
-
-function timeAgo(dateStr) {
-  if (!dateStr) return ''
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const minutes = Math.floor(diff / 60000)
-  if (minutes < 60) return `Il y a ${minutes} min`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `Il y a ${hours}h`
-  const days = Math.floor(hours / 24)
-  return `Il y a ${days}j`
 }
 
 export default function ListingCard({ listing }) {
@@ -88,21 +77,15 @@ export default function ListingCard({ listing }) {
 
         {/* Footer */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 text-xs text-stone-400">
+          <div className="flex items-center gap-3 text-xs text-stone-500">
             {listing.locationText && (
               <span className="flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
+                <MapPin className="w-3 h-3" aria-hidden="true" />
                 {listing.locationText}
               </span>
             )}
-            {listing.createdAt && (
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {timeAgo(listing.createdAt)}
-              </span>
-            )}
           </div>
-          <ArrowRight className="w-3.5 h-3.5 text-stone-300 group-hover:text-forest-700 transition-colors" />
+          <ArrowRight className="w-3.5 h-3.5 text-stone-300 group-hover:text-forest-700 transition-colors" aria-hidden="true" />
         </div>
       </div>
 

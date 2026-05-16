@@ -30,6 +30,7 @@ export default function Browse() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState('')
   const [totalPages, setTotalPages] = useState(0)
   const [totalElements, setTotalElements] = useState(0)
 
@@ -43,9 +44,9 @@ export default function Browse() {
 
   const fetchListings = useCallback(() => {
     setLoading(true)
+    setFetchError('')
     const params = { page, size: 12 }
     if (category) params.category = category
-
     if (type) params.type = type
 
     const promise = query
@@ -55,11 +56,15 @@ export default function Browse() {
     promise
       .then((res) => {
         const data = res.data
-        setListings(data?.content || [])
+        const available = (data?.content || []).filter(l => l.status !== 'EXCHANGED')
+        setListings(available)
         setTotalPages(data?.totalPages || 0)
         setTotalElements(data?.totalElements || 0)
       })
-      .catch(() => setListings([]))
+      .catch(() => {
+        setListings([])
+        setFetchError('Impossible de charger les annonces. Vérifiez votre connexion et réessayez.')
+      })
       .finally(() => setLoading(false))
   }, [query, category, type, page])
 
@@ -186,6 +191,7 @@ export default function Browse() {
             <button
               key={c.value}
               onClick={() => updateParam('category', category === c.value ? '' : c.value)}
+              aria-pressed={category === c.value}
               className={`shrink-0 text-xs px-3 py-1.5 rounded-full border transition-colors ${
                 category === c.value
                   ? 'bg-forest-800 text-white border-forest-800'
@@ -196,6 +202,16 @@ export default function Browse() {
             </button>
           ))}
         </div>
+
+        {/* Fetch error */}
+        {fetchError && !loading && (
+          <div className="flex items-center justify-between gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-4 text-sm text-red-700">
+            <span>{fetchError}</span>
+            <button onClick={fetchListings} className="shrink-0 text-xs font-medium underline hover:no-underline">
+              Réessayer
+            </button>
+          </div>
+        )}
 
         {/* Grid */}
         {loading ? (

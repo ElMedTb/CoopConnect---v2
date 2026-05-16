@@ -1,6 +1,6 @@
-# CoopConnect AI
+# CoopConnect
 
-Plateforme intelligente d'économie circulaire et de coopération économique au Maroc.
+Plateforme d'économie circulaire et de coopération économique au Maroc.
 
 **Projet académique** — MIAGE · Université Côte d'Azur / EMSI Casablanca · 2025–2026
 
@@ -19,7 +19,7 @@ Plateforme intelligente d'économie circulaire et de coopération économique au
 
 ## Le projet
 
-CoopConnect AI permet aux particuliers, professionnels, coopératives et associations de publier des annonces de biens ou services disponibles à l'échange. Un moteur d'intelligence artificielle détecte automatiquement les meilleures correspondances entre annonces.
+CoopConnect permet aux particuliers, professionnels, coopératives et associations de publier des annonces de biens ou services disponibles à l'échange. Un moteur de matching détecte automatiquement les meilleures correspondances entre annonces.
 
 La plateforme s'appuie sur l'IA pour :
 - analyser les **besoins** et **surplus** (produits, services, ressources) ;
@@ -148,4 +148,38 @@ Mot de passe : Test1234!
 
 ## Documentation technique détaillée
 
-Voir [`coopconnectCodeV1/README.md`](coopconnectCodeV1/README.md) pour l'architecture complète, le détail de chaque service, les endpoints API, et le fonctionnement du moteur de matching IA.
+Voir [`coopconnectCodeV1/README.md`](coopconnectCodeV1/README.md) pour l'architecture complète, le détail de chaque service, les endpoints API, et le fonctionnement du moteur de matching.
+
+---
+
+## Changelog frontend (V1 → V1.1)
+
+### Accessibilité & qualité
+- Tous les boutons icône-seul ont un `aria-label`
+- Formulaires : associations `htmlFor`/`id` sur tous les champs
+- `text-stone-400` remplacé par `text-stone-500` pour le texte de contenu (contraste WCAG AA)
+- `window.confirm` / `alert()` remplacés par des confirmations inline dans l'interface
+- `prefers-reduced-motion` respecté globalement
+
+### UX & flux
+- **Saisie de localisation** : l'adresse texte est remplacée par un sélecteur de carte (Leaflet, clic ou GPS) dans les formulaires Créer/Modifier une annonce
+- **Page d'annonce** (visiteur) : mini-carte de localisation affichée sous la description si coordonnées disponibles
+- **Page d'annonce** (propriétaire) : mise en page 3 colonnes — carte | description | détails — avec les recommandations en bas
+- **Annonces échangées** (`status = EXCHANGED`) masquées dans Browse et Mes annonces
+- **Horodatage** ("Il y a X minutes") retiré des cartes d'annonce
+- **Compteur de vues** retiré de la page détail d'annonce
+- **Premier accès** : tableau de bord simplifié pour les nouveaux utilisateurs (sans les stats à zéro)
+- États vides améliorés dans Recommandations, Échanges et Tableau de bord
+
+### Nomenclature
+- Nom de l'application : "CoopConnect AI" → "CoopConnect"
+- Labels "IA" retirés de la navigation et des titres de page ("Mes matchs IA" → "Mes matchs", etc.)
+- Crédit académique retiré du footer de la landing page
+
+### Landing page
+- Stats remplacées par une ligne de preuve textuelle (suppression du pattern "hero metrics")
+- Section fonctionnalités remplacée par une démo produit interactive (maquettes d'annonce + résultats de matching)
+
+### Matching / Recommandations
+- Texte "Utilisateur fiable" et scores de confiance filtrés côté frontend dans les explications des correspondances *(note : à supprimer côté matching-service dans le prompt Gemini pour une solution définitive)*
+- Distance + adresse de localisation affichées ensemble dans les cartes de correspondance (si le service retourne `locationText` dans la réponse)

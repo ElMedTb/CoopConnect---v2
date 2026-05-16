@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { listingsApi, matchesApi } from '../api/listings'
@@ -6,13 +6,18 @@ import { exchangesApi } from '../api/users'
 import MatchCard, { normalizeMatch } from '../components/listings/MatchCard'
 import {
   MapPin, Clock, User, Edit, Trash2, Sparkles,
-  ArrowLeft, Package, CheckCircle, ExternalLink, X, ChevronDown
+  ArrowLeft, Package, CheckCircle, X, ChevronDown, AlertTriangle
 } from 'lucide-react'
 
 const CATEGORY_LABELS = {
   ELECTRONICS: 'Électronique', CLOTHING: 'Vêtements', HOME_GARDEN: 'Maison & Jardin',
   SPORTS_OUTDOORS: 'Sport', BOOKS_MEDIA: 'Livres & Médias', TOOLS: 'Outillage',
   SERVICES: 'Services', SKILLS_EDUCATION: 'Compétences', OTHER: 'Autre',
+}
+
+const TYPE_LABELS = {
+  ITEM: 'Objet', SERVICE: 'Service', SKILL: 'Compétence',
+  SPACE: 'Espace', TRANSPORT: 'Transport',
 }
 
 const CONDITION_LABELS = {
@@ -36,6 +41,52 @@ function timeAgo(dateStr) {
   return `Il y a ${days} jours`
 }
 
+function ListingMapCard({ latitude, longitude, locationText }) {
+  const mapRef = useRef(null)
+  const mapInstanceRef = useRef(null)
+
+  useEffect(() => {
+    if (!mapRef.current || mapInstanceRef.current) return
+    import('leaflet').then(({ default: L }) => {
+      delete L.Icon.Default.prototype._getIconUrl
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      })
+      const map = L.map(mapRef.current, {
+        center: [latitude, longitude], zoom: 13,
+        zoomControl: false, dragging: false,
+        scrollWheelZoom: false, doubleClickZoom: false, touchZoom: false,
+      })
+      L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+        { attribution: '© Esri', maxZoom: 19 }
+      ).addTo(map)
+      L.marker([latitude, longitude]).addTo(map)
+      mapInstanceRef.current = map
+    })
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove()
+        mapInstanceRef.current = null
+      }
+    }
+  }, [latitude, longitude])
+
+  return (
+    <div className="card overflow-hidden">
+      <div ref={mapRef} className="h-44 w-full" />
+      {locationText && (
+        <div className="px-4 py-2.5 border-t border-stone-100 flex items-center gap-1.5 text-xs text-stone-600">
+          <MapPin className="w-3.5 h-3.5 text-forest-600 shrink-0" aria-hidden="true" />
+          {locationText}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // Modal d'échange pour une annonce d'un autre utilisateur
 function ExchangeModal({ listing, onClose, onSuccess }) {
   const [myListings, setMyListings] = useState([])
@@ -44,6 +95,12 @@ function ExchangeModal({ listing, onClose, onSuccess }) {
   const [message, setMessage] = useState('')
   const [sending, setSending] = useState(false)
   const [loadingMyListings, setLoadingMyListings] = useState(true)
+
+  useEffect(() => {
+    const handleKeyDown = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
 
   useEffect(() => {
     listingsApi.getMine({ size: 50 })
@@ -80,8 +137,8 @@ function ExchangeModal({ listing, onClose, onSuccess }) {
             <h3 className="text-base font-bold text-stone-900">Proposer un échange</h3>
             <p className="text-xs text-stone-500 mt-0.5 line-clamp-1">Pour : {listing.title}</p>
           </div>
-          <button onClick={onClose} className="p-1 text-stone-400 hover:text-stone-600">
-            <X className="w-5 h-5" />
+          <button onClick={onClose} aria-label="Fermer" className="p-1 text-stone-400 hover:text-stone-600">
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -174,6 +231,8 @@ export default function ListingDetail() {
   const [error, setError] = useState('')
   const [showExchangeModal, setShowExchangeModal] = useState(false)
   const [exchangeSuccess, setExchangeSuccess] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
 
   useEffect(() => {
     setLoading(true)
@@ -201,19 +260,20 @@ export default function ListingDetail() {
   }, [listing, isOwner, id])
 
   const handleDelete = async () => {
-    if (!window.confirm('Supprimer cette annonce ?')) return
+    setDeleteError('')
     try {
       await listingsApi.remove(id)
       navigate('/listings/my')
     } catch {
-      alert('Erreur lors de la suppression.')
+      setShowDeleteConfirm(false)
+      setDeleteError('Erreur lors de la suppression. Réessayez.')
     }
   }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-stone-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
           <div className="animate-pulse space-y-4">
             <div className="h-6 bg-stone-200 rounded w-1/3" />
             <div className="h-8 bg-stone-200 rounded w-2/3" />
@@ -241,177 +301,203 @@ export default function ListingDetail() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <Link to="/browse" className="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-700 mb-6 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" />
           Retour aux annonces
         </Link>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Main content */}
-          <div className="lg:col-span-2 space-y-5">
-            {/* Listing header */}
-            <div className="card p-6">
-              <div className="flex items-start justify-between gap-3 mb-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={statusConf.color}>{statusConf.label}</span>
-                    {listing.category && (
-                      <span className="badge-stone">{CATEGORY_LABELS[listing.category] || listing.category}</span>
-                    )}
-                    {listing.condition && (
-                      <span className="badge-green">{CONDITION_LABELS[listing.condition] || listing.condition}</span>
-                    )}
-                  </div>
-                  <h1 className="text-xl font-bold text-stone-900 leading-tight">{listing.title}</h1>
-                </div>
-
-                {isOwner && (
-                  <div className="flex gap-2 shrink-0">
-                    <Link to={`/listings/${id}/edit`} className="btn-secondary text-xs px-2.5 py-1.5">
-                      <Edit className="w-3.5 h-3.5" />
-                    </Link>
-                    <button onClick={handleDelete} className="btn-secondary text-xs px-2.5 py-1.5 text-red-600 hover:border-red-200 hover:bg-red-50">
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+        {isOwner ? (
+          /* Owner: map | description | sidebar — recommendations below */
+          <>
+            <div className="grid lg:grid-cols-3 gap-6">
+              {/* Left: map */}
+              <div>
+                {listing.latitude && listing.longitude && (
+                  <ListingMapCard
+                    latitude={listing.latitude}
+                    longitude={listing.longitude}
+                    locationText={listing.locationText}
+                  />
                 )}
               </div>
 
-              <p className="text-stone-600 leading-relaxed whitespace-pre-line">{listing.description}</p>
+              {/* Center: description */}
+              <div>
+                <div className="card p-6">
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={statusConf.color}>{statusConf.label}</span>
+                        {listing.category && <span className="badge-stone">{CATEGORY_LABELS[listing.category] || listing.category}</span>}
+                        {listing.condition && <span className="badge-green">{CONDITION_LABELS[listing.condition] || listing.condition}</span>}
+                      </div>
+                      <h1 className="text-xl font-bold text-stone-900 leading-tight">{listing.title}</h1>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Link to={`/listings/${id}/edit`} aria-label="Modifier l'annonce" className="btn-secondary text-xs px-2.5 py-1.5">
+                        <Edit className="w-3.5 h-3.5" aria-hidden="true" />
+                      </Link>
+                      {showDeleteConfirm ? (
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-red-600 font-medium">Confirmer ?</span>
+                          <button onClick={handleDelete} className="text-xs px-2 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors">Oui</button>
+                          <button onClick={() => setShowDeleteConfirm(false)} className="text-xs px-2 py-1 rounded border border-stone-200 text-stone-600 hover:bg-stone-50 transition-colors">Non</button>
+                        </div>
+                      ) : (
+                        <button onClick={() => setShowDeleteConfirm(true)} aria-label="Supprimer l'annonce" className="btn-secondary text-xs px-2.5 py-1.5 text-red-600 hover:border-red-200 hover:bg-red-50">
+                          <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {deleteError && (
+                    <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-3">
+                      <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" />{deleteError}
+                    </div>
+                  )}
+                  <p className="text-stone-600 leading-relaxed whitespace-pre-line">{listing.description}</p>
+                  {listing.createdAt && (
+                    <div className="flex items-center gap-1.5 mt-5 pt-5 border-t border-stone-100 text-sm text-stone-500">
+                      <Clock className="w-4 h-4" aria-hidden="true" />{timeAgo(listing.createdAt)}
+                    </div>
+                  )}
+                </div>
+              </div>
 
-              <div className="flex flex-wrap gap-4 mt-5 pt-5 border-t border-stone-100 text-sm text-stone-500">
-                {listing.locationText && (
-                  <span className="flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4" />{listing.locationText}
-                  </span>
-                )}
-                {listing.createdAt && (
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="w-4 h-4" />{timeAgo(listing.createdAt)}
-                  </span>
-                )}
-                <span className="flex items-center gap-1.5">
-                  <ExternalLink className="w-4 h-4" />{listing.viewsCount || 0} vues
-                </span>
+              {/* Right: sidebar */}
+              <div className="space-y-4">
+                <div className="card p-5">
+                  <h3 className="text-sm font-semibold text-stone-900 mb-4 flex items-center gap-2">
+                    <User className="w-4 h-4 text-stone-400" aria-hidden="true" />Publié par
+                  </h3>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-forest-100 flex items-center justify-center text-forest-800 font-semibold text-sm">
+                      {listing.ownerName?.charAt(0) || '?'}
+                    </div>
+                    <p className="text-sm font-medium text-stone-900">{listing.ownerName || 'Utilisateur'}</p>
+                  </div>
+                </div>
+                <div className="card p-5">
+                  <h3 className="text-sm font-semibold text-stone-900 mb-4">Détails</h3>
+                  <dl className="space-y-3">
+                    {listing.type && <div className="flex justify-between"><dt className="text-xs text-stone-500">Type</dt><dd className="text-xs font-medium text-stone-700">{TYPE_LABELS[listing.type] || listing.type}</dd></div>}
+                    {listing.category && <div className="flex justify-between"><dt className="text-xs text-stone-500">Catégorie</dt><dd className="text-xs font-medium text-stone-700">{CATEGORY_LABELS[listing.category] || listing.category}</dd></div>}
+                    {listing.condition && <div className="flex justify-between"><dt className="text-xs text-stone-500">État</dt><dd className="text-xs font-medium text-stone-700">{CONDITION_LABELS[listing.condition] || listing.condition}</dd></div>}
+                    {listing.isDeliveryAvailable && <div className="flex justify-between"><dt className="text-xs text-stone-500">Livraison</dt><dd className="flex items-center gap-1 text-xs text-forest-700"><CheckCircle className="w-3 h-3" aria-hidden="true" /> Disponible</dd></div>}
+                  </dl>
+                </div>
               </div>
             </div>
 
-            {/* Recommandations IA — uniquement pour ses PROPRES annonces */}
-            {isOwner && (
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="w-4 h-4 text-forest-600" />
-                  <h2 className="section-title">Recommandations IA</h2>
-                </div>
-
-                {matchLoading ? (
-                  <div className="space-y-3">
-                    {[1, 2].map(i => (
-                      <div key={i} className="card p-4 animate-pulse">
-                        <div className="flex gap-3">
-                          <div className="w-12 h-12 bg-stone-100 rounded-xl shrink-0" />
-                          <div className="flex-1 space-y-2">
-                            <div className="h-4 bg-stone-100 rounded w-3/4" />
-                            <div className="h-3 bg-stone-100 rounded w-full" />
-                            <div className="h-3 bg-stone-100 rounded w-1/2" />
-                          </div>
+            {/* Recommendations below the grid */}
+            <div className="mt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="w-4 h-4 text-forest-600" aria-hidden="true" />
+                <h2 className="section-title">Recommandations</h2>
+              </div>
+              {matchLoading ? (
+                <div className="space-y-3">
+                  {[1, 2].map(i => (
+                    <div key={i} className="card p-4 animate-pulse">
+                      <div className="flex gap-3">
+                        <div className="w-12 h-12 bg-stone-100 rounded-xl shrink-0" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 bg-stone-100 rounded w-3/4" />
+                          <div className="h-3 bg-stone-100 rounded w-full" />
+                          <div className="h-3 bg-stone-100 rounded w-1/2" />
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : matches.length === 0 ? (
-                  <div className="card p-6 text-center">
-                    <Sparkles className="w-7 h-7 text-stone-300 mx-auto mb-2" />
-                    <p className="text-sm text-stone-500">Aucune recommandation pour l'instant.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {matches.map((m, i) => (
-                      <MatchCard
-                        key={m.listingId || i}
-                        match={m}
-                        showExchange={true}
-                        myListingTitle={listing.title}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-4">
-            <div className="card p-5">
-              <h3 className="text-sm font-semibold text-stone-900 mb-4 flex items-center gap-2">
-                <User className="w-4 h-4 text-stone-400" />
-                Publié par
-              </h3>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-forest-100 flex items-center justify-center text-forest-800 font-semibold text-sm">
-                  {listing.ownerName?.charAt(0) || '?'}
+                    </div>
+                  ))}
                 </div>
-                <div>
+              ) : matches.length === 0 ? (
+                <div className="card p-6 text-center">
+                  <Sparkles className="w-7 h-7 text-stone-300 mx-auto mb-2" aria-hidden="true" />
+                  <p className="text-sm text-stone-500">Aucune recommandation pour l'instant.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {matches.map((m, i) => (
+                    <MatchCard key={m.listingId || i} match={m} showExchange={true} myListingTitle={listing.title} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          /* Visitor: description (2 cols) + map below + sidebar (1 col) */
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-5">
+              <div className="card p-6">
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={statusConf.color}>{statusConf.label}</span>
+                      {listing.category && <span className="badge-stone">{CATEGORY_LABELS[listing.category] || listing.category}</span>}
+                      {listing.condition && <span className="badge-green">{CONDITION_LABELS[listing.condition] || listing.condition}</span>}
+                    </div>
+                    <h1 className="text-xl font-bold text-stone-900 leading-tight">{listing.title}</h1>
+                  </div>
+                </div>
+                <p className="text-stone-600 leading-relaxed whitespace-pre-line">{listing.description}</p>
+                <div className="flex flex-wrap gap-4 mt-5 pt-5 border-t border-stone-100 text-sm text-stone-500">
+                  {listing.locationText && <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" aria-hidden="true" />{listing.locationText}</span>}
+                  {listing.createdAt && <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" aria-hidden="true" />{timeAgo(listing.createdAt)}</span>}
+                </div>
+              </div>
+
+              {listing.latitude && listing.longitude && (
+                <ListingMapCard
+                  latitude={listing.latitude}
+                  longitude={listing.longitude}
+                  locationText={listing.locationText}
+                />
+              )}
+            </div>
+
+            <div className="space-y-4">
+              <div className="card p-5">
+                <h3 className="text-sm font-semibold text-stone-900 mb-4 flex items-center gap-2">
+                  <User className="w-4 h-4 text-stone-400" aria-hidden="true" />Publié par
+                </h3>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-forest-100 flex items-center justify-center text-forest-800 font-semibold text-sm">
+                    {listing.ownerName?.charAt(0) || '?'}
+                  </div>
                   <p className="text-sm font-medium text-stone-900">{listing.ownerName || 'Utilisateur'}</p>
                 </div>
+                {isAuthenticated && !exchangeSuccess && listing.status !== 'EXCHANGED' && (
+                  <button onClick={() => setShowExchangeModal(true)} className="btn-primary w-full justify-center py-2.5 text-sm">
+                    Proposer un échange
+                  </button>
+                )}
+                {exchangeSuccess && (
+                  <div className="text-sm text-forest-800 bg-forest-50 border border-forest-200 rounded-lg px-4 py-3 flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
+                    Demande envoyée !{' '}
+                    <Link to="/exchanges" className="underline">Voir mes échanges</Link>
+                  </div>
+                )}
+                {!isAuthenticated && (
+                  <Link to="/login" className="btn-primary w-full justify-center py-2.5 text-sm text-center block">
+                    Se connecter pour contacter
+                  </Link>
+                )}
               </div>
 
-              {isAuthenticated && !isOwner && !exchangeSuccess && listing.status !== 'EXCHANGED' && (
-                <button
-                  onClick={() => setShowExchangeModal(true)}
-                  className="btn-primary w-full justify-center py-2.5 text-sm"
-                >
-                  Proposer un échange
-                </button>
-              )}
-              {exchangeSuccess && (
-                <div className="text-sm text-forest-800 bg-forest-50 border border-forest-200 rounded-lg px-4 py-3 flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 shrink-0" />
-                  Demande envoyée !{' '}
-                  <Link to="/exchanges" className="underline">Voir mes échanges</Link>
-                </div>
-              )}
-              {!isAuthenticated && (
-                <Link to="/login" className="btn-primary w-full justify-center py-2.5 text-sm text-center block">
-                  Se connecter pour contacter
-                </Link>
-              )}
-            </div>
-
-            <div className="card p-5">
-              <h3 className="text-sm font-semibold text-stone-900 mb-4">Détails</h3>
-              <dl className="space-y-3">
-                {listing.type && (
-                  <div className="flex justify-between">
-                    <dt className="text-xs text-stone-500">Type</dt>
-                    <dd className="text-xs font-medium text-stone-700">{listing.type}</dd>
-                  </div>
-                )}
-                {listing.category && (
-                  <div className="flex justify-between">
-                    <dt className="text-xs text-stone-500">Catégorie</dt>
-                    <dd className="text-xs font-medium text-stone-700">{CATEGORY_LABELS[listing.category] || listing.category}</dd>
-                  </div>
-                )}
-                {listing.condition && (
-                  <div className="flex justify-between">
-                    <dt className="text-xs text-stone-500">État</dt>
-                    <dd className="text-xs font-medium text-stone-700">{CONDITION_LABELS[listing.condition] || listing.condition}</dd>
-                  </div>
-                )}
-                {listing.isDeliveryAvailable && (
-                  <div className="flex justify-between">
-                    <dt className="text-xs text-stone-500">Livraison</dt>
-                    <dd className="flex items-center gap-1 text-xs text-forest-700">
-                      <CheckCircle className="w-3 h-3" /> Disponible
-                    </dd>
-                  </div>
-                )}
-              </dl>
+              <div className="card p-5">
+                <h3 className="text-sm font-semibold text-stone-900 mb-4">Détails</h3>
+                <dl className="space-y-3">
+                  {listing.type && <div className="flex justify-between"><dt className="text-xs text-stone-500">Type</dt><dd className="text-xs font-medium text-stone-700">{TYPE_LABELS[listing.type] || listing.type}</dd></div>}
+                  {listing.category && <div className="flex justify-between"><dt className="text-xs text-stone-500">Catégorie</dt><dd className="text-xs font-medium text-stone-700">{CATEGORY_LABELS[listing.category] || listing.category}</dd></div>}
+                  {listing.condition && <div className="flex justify-between"><dt className="text-xs text-stone-500">État</dt><dd className="text-xs font-medium text-stone-700">{CONDITION_LABELS[listing.condition] || listing.condition}</dd></div>}
+                  {listing.isDeliveryAvailable && <div className="flex justify-between"><dt className="text-xs text-stone-500">Livraison</dt><dd className="flex items-center gap-1 text-xs text-forest-700"><CheckCircle className="w-3 h-3" aria-hidden="true" /> Disponible</dd></div>}
+                </dl>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {showExchangeModal && (

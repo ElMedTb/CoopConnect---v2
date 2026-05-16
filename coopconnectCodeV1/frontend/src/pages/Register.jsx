@@ -108,6 +108,7 @@ export default function Register() {
                   <button
                     key={type.value}
                     type="button"
+                    aria-pressed={form.userType === type.value}
                     onClick={() => setForm((p) => ({ ...p, userType: type.value }))}
                     className={`text-left p-3 rounded-lg border text-sm transition-all ${
                       form.userType === type.value
@@ -125,34 +126,35 @@ export default function Register() {
             {/* Nom et prénom */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="label">Prénom</label>
-                <input className="input" type="text" name="firstName" value={form.firstName} onChange={handleChange} placeholder="Saad" autoComplete="given-name" />
+                <label className="label" htmlFor="firstName">Prénom</label>
+                <input id="firstName" className="input" type="text" name="firstName" value={form.firstName} onChange={handleChange} placeholder="Prénom" autoComplete="given-name" />
               </div>
               <div>
-                <label className="label">Nom</label>
-                <input className="input" type="text" name="lastName" value={form.lastName} onChange={handleChange} placeholder="Bendahou" autoComplete="family-name" />
+                <label className="label" htmlFor="lastName">Nom</label>
+                <input id="lastName" className="input" type="text" name="lastName" value={form.lastName} onChange={handleChange} placeholder="Nom" autoComplete="family-name" />
               </div>
             </div>
 
             <div>
-              <label className="label">Nom d'utilisateur</label>
-              <input className="input" type="text" name="username" value={form.username} onChange={handleChange} placeholder="saad_bendahou" autoComplete="username" />
+              <label className="label" htmlFor="username">Nom d'utilisateur</label>
+              <input id="username" className="input" type="text" name="username" value={form.username} onChange={handleChange} placeholder="votre_identifiant" autoComplete="username" />
             </div>
 
             <div>
-              <label className="label">Email</label>
-              <input className="input" type="email" name="email" value={form.email} onChange={handleChange} placeholder="saad@exemple.com" autoComplete="email" />
+              <label className="label" htmlFor="email">Email</label>
+              <input id="email" className="input" type="email" name="email" value={form.email} onChange={handleChange} placeholder="votre@email.com" autoComplete="email" />
             </div>
 
             <div>
-              <label className="label">Téléphone (optionnel)</label>
-              <input className="input" type="tel" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} placeholder="+212 6XX XXX XXX" autoComplete="tel" />
+              <label className="label" htmlFor="phoneNumber">Téléphone (optionnel)</label>
+              <input id="phoneNumber" className="input" type="tel" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} placeholder="+212 6XX XXX XXX" autoComplete="tel" />
             </div>
 
             <div>
-              <label className="label">Mot de passe</label>
+              <label className="label" htmlFor="password">Mot de passe</label>
               <div className="relative">
                 <input
+                  id="password"
                   className="input pr-10"
                   type={showPassword ? 'text' : 'password'}
                   name="password"
@@ -164,8 +166,8 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
-                  tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>

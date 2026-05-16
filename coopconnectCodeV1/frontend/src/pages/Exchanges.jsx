@@ -67,9 +67,9 @@ function Chat({ exchange, currentUsername }) {
           return (
             <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[75%] px-3 py-2 rounded-xl text-sm ${mine ? 'bg-forest-800 text-white' : 'bg-stone-100 text-stone-800'}`}>
-                {!mine && <p className="text-xs font-medium mb-0.5 opacity-60">{m.senderName}</p>}
+                {!mine && <p className="text-xs font-medium mb-0.5 opacity-70">{m.senderName}</p>}
                 <p>{m.content}</p>
-                <p className={`text-xs mt-0.5 ${mine ? 'text-white/50' : 'text-stone-400'}`}>{timeAgo(m.sentAt)}</p>
+                <p className={`text-xs mt-0.5 ${mine ? 'text-white/70' : 'text-stone-500'}`}>{timeAgo(m.sentAt)}</p>
               </div>
             </div>
           )
@@ -83,9 +83,15 @@ function Chat({ exchange, currentUsername }) {
           onChange={e => setNewMsg(e.target.value)}
           placeholder="Écrire un message..."
           disabled={sending}
+          aria-label="Message"
         />
-        <button type="submit" className="btn-primary px-3 py-2" disabled={sending || !newMsg.trim()}>
-          <Send className="w-4 h-4" />
+        <button
+          type="submit"
+          aria-label="Envoyer"
+          className="btn-primary px-3 py-2"
+          disabled={sending || !newMsg.trim()}
+        >
+          <Send className="w-4 h-4" aria-hidden="true" />
         </button>
       </form>
     </div>
@@ -96,6 +102,8 @@ function ExchangeCard({ exchange, currentUsername, onAction }) {
   const [open, setOpen] = useState(false)
   const [responding, setResponding] = useState(false)
   const [responseMsg, setResponseMsg] = useState('')
+  const [actionError, setActionError] = useState('')
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
 
   const isProvider = exchange.providerUsername === currentUsername
   const isRequester = exchange.requesterUsername === currentUsername
@@ -105,11 +113,12 @@ function ExchangeCard({ exchange, currentUsername, onAction }) {
 
   const handleAccept = async () => {
     setResponding(true)
+    setActionError('')
     try {
       await exchangesApi.accept(exchange.id, responseMsg)
       onAction()
     } catch (err) {
-      alert(err.response?.data?.message || 'Erreur')
+      setActionError(err.response?.data?.message || 'Erreur lors de l\'acceptation.')
     } finally {
       setResponding(false)
     }
@@ -117,23 +126,23 @@ function ExchangeCard({ exchange, currentUsername, onAction }) {
 
   const handleReject = async () => {
     setResponding(true)
+    setActionError('')
     try {
       await exchangesApi.reject(exchange.id, responseMsg)
       onAction()
     } catch (err) {
-      alert(err.response?.data?.message || 'Erreur')
+      setActionError(err.response?.data?.message || 'Erreur lors du refus.')
     } finally {
       setResponding(false)
     }
   }
 
   const handleCancel = async () => {
-    if (!window.confirm('Annuler cette demande d\'échange ?')) return
     try {
       await exchangesApi.cancel(exchange.id)
       onAction()
     } catch (err) {
-      alert(err.response?.data?.message || 'Erreur')
+      setShowCancelConfirm(false)
     }
   }
 
@@ -181,22 +190,25 @@ function ExchangeCard({ exchange, currentUsername, onAction }) {
                 rows={2}
                 placeholder="Message optionnel..."
                 value={responseMsg}
-                onChange={e => setResponseMsg(e.target.value)}
+                onChange={e => { setResponseMsg(e.target.value); setActionError('') }}
               />
+              {actionError && (
+                <p className="text-xs text-red-600">{actionError}</p>
+              )}
               <div className="flex gap-2">
                 <button
                   onClick={handleAccept}
                   disabled={responding}
                   className="btn-primary flex items-center gap-1.5 text-sm"
                 >
-                  <CheckCircle className="w-4 h-4" /> Accepter
+                  <CheckCircle className="w-4 h-4" aria-hidden="true" /> Accepter
                 </button>
                 <button
                   onClick={handleReject}
                   disabled={responding}
                   className="btn-secondary flex items-center gap-1.5 text-sm text-red-600 hover:border-red-200 hover:bg-red-50"
                 >
-                  <XCircle className="w-4 h-4" /> Refuser
+                  <XCircle className="w-4 h-4" aria-hidden="true" /> Refuser
                 </button>
               </div>
             </div>
@@ -217,10 +229,31 @@ function ExchangeCard({ exchange, currentUsername, onAction }) {
           </div>
 
           {canCancel && (
-            <div className="flex justify-end">
-              <button onClick={handleCancel} className="text-xs text-stone-400 hover:text-red-600 transition-colors">
-                Annuler la demande
-              </button>
+            <div className="flex justify-end items-center gap-2">
+              {showCancelConfirm ? (
+                <>
+                  <span className="text-xs text-stone-500">Confirmer l'annulation ?</span>
+                  <button
+                    onClick={handleCancel}
+                    className="text-xs font-medium text-red-600 hover:text-red-800 transition-colors"
+                  >
+                    Oui
+                  </button>
+                  <button
+                    onClick={() => setShowCancelConfirm(false)}
+                    className="text-xs text-stone-500 hover:text-stone-700 transition-colors"
+                  >
+                    Non
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setShowCancelConfirm(true)}
+                  className="text-xs text-stone-500 hover:text-red-600 transition-colors"
+                >
+                  Annuler la demande
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -296,12 +329,32 @@ export default function Exchanges() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="card p-10 text-center">
-            <Clock className="w-8 h-8 text-stone-300 mx-auto mb-3" />
-            <p className="text-stone-500 text-sm">Aucun échange pour l'instant.</p>
-            <Link to="/browse" className="btn-secondary text-sm mt-4 inline-flex">
-              Parcourir les annonces
-            </Link>
+          <div className="card p-8 text-center">
+            <Clock className="w-8 h-8 text-stone-300 mx-auto mb-3" aria-hidden="true" />
+            {filter === 'received' ? (
+              <>
+                <p className="text-stone-600 font-medium mb-1">Aucune demande reçue</p>
+                <p className="text-stone-500 text-sm">Les demandes d'échange sur vos annonces apparaîtront ici.</p>
+              </>
+            ) : filter === 'sent' ? (
+              <>
+                <p className="text-stone-600 font-medium mb-2">Aucune demande envoyée</p>
+                <p className="text-stone-500 text-sm mb-5">Proposez un échange à partir d'une annonce ou de vos recommandations IA.</p>
+                <div className="flex gap-2 justify-center flex-wrap">
+                  <Link to="/browse" className="btn-secondary text-sm">Parcourir les annonces</Link>
+                  <Link to="/matches" className="btn-secondary text-sm">Recommandations IA</Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-stone-600 font-medium mb-2">Aucun échange pour l'instant</p>
+                <p className="text-stone-500 text-sm mb-5">Parcourez les annonces ou utilisez les recommandations IA pour trouver des échanges.</p>
+                <div className="flex gap-2 justify-center flex-wrap">
+                  <Link to="/browse" className="btn-secondary text-sm">Parcourir les annonces</Link>
+                  <Link to="/matches" className="btn-secondary text-sm">Recommandations IA</Link>
+                </div>
+              </>
+            )}
           </div>
         ) : (
           <div className="space-y-3">

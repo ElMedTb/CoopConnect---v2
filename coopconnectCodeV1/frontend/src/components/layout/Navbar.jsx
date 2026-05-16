@@ -57,7 +57,7 @@ export default function Navbar() {
             {isAuthenticated && (
               <>
                 <NavLink to="/dashboard" className={navLinkClass}>Tableau de bord</NavLink>
-                <NavLink to="/matches" className={navLinkClass}>Mes matchs IA</NavLink>
+                <NavLink to="/matches" className={navLinkClass}>Mes matchs</NavLink>
               </>
             )}
           </nav>
@@ -76,6 +76,9 @@ export default function Navbar() {
                 <div className="relative">
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    aria-expanded={userMenuOpen}
+                    aria-haspopup="menu"
+                    aria-label="Menu utilisateur"
                     className="flex items-center gap-2 text-sm text-stone-700 hover:text-stone-900 transition-colors"
                   >
                     <div className="w-7 h-7 rounded-full bg-forest-100 flex items-center justify-center text-forest-800 font-medium text-xs">
@@ -115,7 +118,7 @@ export default function Navbar() {
                           className="flex items-center gap-2.5 px-3 py-2 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
                         >
                           <Sparkles className="w-4 h-4 text-stone-400" />
-                          Recommandations IA
+                          Recommandations
                         </Link>
                         <Link
                           to="/exchanges"
@@ -166,8 +169,10 @@ export default function Navbar() {
             <button
               className="md:hidden btn-ghost p-1.5"
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+              aria-expanded={mobileOpen}
             >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileOpen ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
             </button>
           </div>
         </div>
@@ -212,7 +217,7 @@ export default function Navbar() {
                   `block px-3 py-2 rounded-lg text-sm font-medium ${isActive ? 'bg-forest-50 text-forest-800' : 'text-stone-700 hover:bg-stone-50'}`
                 }
               >
-                Matchs IA
+                Mes matchs
               </NavLink>
               <Link
                 to="/listings/create"

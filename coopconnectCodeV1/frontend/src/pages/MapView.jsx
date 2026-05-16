@@ -221,22 +221,24 @@ export default function MapView() {
       {/* Barre de contrôle */}
       <div style={{
         background: 'white', borderBottom: '1px solid #e7e5e4',
-        padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0,
-        overflowX: 'auto',
+        padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0,
+        overflowX: 'auto', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
       }}>
         <span style={{ fontSize: 13, fontWeight: 600, color: '#1c1917', whiteSpace: 'nowrap' }}>
-          🗺️ Carte · <span style={{ color: '#78716c', fontWeight: 400 }}>{count} annonces</span>
+          Carte · <span style={{ color: '#78716c', fontWeight: 400 }}>{count} annonce{count !== 1 ? 's' : ''}</span>
         </span>
 
         <div style={{ display: 'flex', gap: 6, overflowX: 'auto' }}>
           <button
             onClick={() => setActiveCategory('')}
             style={{
-              padding: '4px 12px', borderRadius: 999, fontSize: 11, fontWeight: 600,
+              padding: '5px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600,
               border: '1.5px solid', cursor: 'pointer', whiteSpace: 'nowrap',
+              transition: 'all 0.15s',
               background: activeCategory === '' ? '#166534' : 'white',
-              color: activeCategory === '' ? 'white' : '#57534e',
+              color: activeCategory === '' ? 'white' : '#44403c',
               borderColor: activeCategory === '' ? '#166534' : '#d6d3d1',
+              boxShadow: activeCategory === '' ? '0 1px 4px rgba(22,101,52,0.25)' : '0 1px 2px rgba(0,0,0,0.06)',
             }}
           >Toutes</button>
 
@@ -245,11 +247,13 @@ export default function MapView() {
               key={cat}
               onClick={() => setActiveCategory(cat === activeCategory ? '' : cat)}
               style={{
-                padding: '4px 12px', borderRadius: 999, fontSize: 11, fontWeight: 600,
+                padding: '5px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600,
                 border: '1.5px solid', cursor: 'pointer', whiteSpace: 'nowrap',
+                transition: 'all 0.15s',
                 background: activeCategory === cat ? (CATEGORY_COLORS[cat] || '#059669') : 'white',
-                color: activeCategory === cat ? 'white' : '#57534e',
+                color: activeCategory === cat ? 'white' : '#44403c',
                 borderColor: activeCategory === cat ? (CATEGORY_COLORS[cat] || '#059669') : '#d6d3d1',
+                boxShadow: activeCategory === cat ? `0 1px 4px ${CATEGORY_COLORS[cat] || '#059669'}40` : '0 1px 2px rgba(0,0,0,0.06)',
               }}
             >
               {CATEGORY_LABELS[cat] || cat}
@@ -262,9 +266,10 @@ export default function MapView() {
           disabled={locating}
           style={{
             marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6,
-            padding: '5px 12px', borderRadius: 999, fontSize: 11, fontWeight: 600,
-            border: '1.5px solid #d6d3d1', background: 'white', color: '#57534e',
-            cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+            padding: '5px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600,
+            border: '1.5px solid #166534', background: locating ? '#f0fdf4' : 'white', color: '#166534',
+            cursor: locating ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+            boxShadow: '0 1px 2px rgba(0,0,0,0.06)', transition: 'all 0.15s',
           }}
         >
           <Navigation size={13} style={{ animation: locating ? 'spin 1s linear infinite' : 'none' }} />

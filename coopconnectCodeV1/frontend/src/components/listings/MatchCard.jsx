@@ -16,6 +16,15 @@ function ScoreBar({ label, value }) {
   )
 }
 
+function sanitizeExplanation(text) {
+  return (text || '')
+    .replace(/Utilisateur\s+fiable[^.!?]*[.!?]?\s*/gi, '')
+    .replace(/Note\s+de\s+confiance[^.!?]*[.!?]?\s*/gi, '')
+    .replace(/Score\s+de\s+confiance[^.!?]*[.!?]?\s*/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+}
+
 // Normalise les clés snake_case → camelCase depuis l'API matching
 export function normalizeMatch(m) {
   return {
@@ -29,7 +38,8 @@ export function normalizeMatch(m) {
       priceProximity: m.score_breakdown?.price_proximity ?? m.scoreBreakdown?.priceProximity ?? 0,
     },
     distanceKm: m.distance_km ?? m.distanceKm ?? null,
-    explanation: m.explanation || '',
+    locationText: m.location_text || m.locationText || null,
+    explanation: sanitizeExplanation(m.explanation),
     title: m.title || null,
   }
 }
@@ -38,6 +48,8 @@ export default function MatchCard({ match: rawMatch, showExchange = false, myLis
   const match = normalizeMatch(rawMatch)
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
+  const [exchangeError, setExchangeError] = useState('')
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const scorePct = Math.round(match.score * 100)
   const scoreColor =
@@ -47,6 +59,7 @@ export default function MatchCard({ match: rawMatch, showExchange = false, myLis
 
   const handleExchange = async () => {
     if (!match.listingId) return
+    setExchangeError('')
     setSending(true)
     try {
       const message = myListingTitle
@@ -55,7 +68,7 @@ export default function MatchCard({ match: rawMatch, showExchange = false, myLis
       await exchangesApi.create({ listingId: match.listingId, message })
       setSent(true)
     } catch (err) {
-      alert(err.response?.data?.message || "Erreur lors de la demande d'échange.")
+      setExchangeError(err.response?.data?.message || "Erreur lors de la demande d'échange.")
     } finally {
       setSending(false)
     }
@@ -79,10 +92,15 @@ export default function MatchCard({ match: rawMatch, showExchange = false, myLis
 
           <p className="text-xs text-stone-500 mb-2 italic leading-relaxed">{match.explanation}</p>
 
-          {match.distanceKm !== null && match.distanceKm !== undefined && (
-            <div className="flex items-center gap-1 text-xs text-stone-400 mb-3">
-              <MapPin className="w-3 h-3" />
-              {match.distanceKm < 1 ? 'Moins d\'1 km' : `${match.distanceKm.toFixed(1)} km`}
+          {(match.distanceKm != null || match.locationText) && (
+            <div className="flex items-center gap-1.5 text-xs text-stone-500 mb-3 flex-wrap">
+              <MapPin className="w-3 h-3 shrink-0" aria-hidden="true" />
+              {match.distanceKm != null && (
+                <span>{match.distanceKm < 1 ? 'Moins d\'1 km' : `${match.distanceKm.toFixed(1)} km`}</span>
+              )}
+              {match.locationText && (
+                <span className="text-stone-400">· {match.locationText}</span>
+              )}
             </div>
           )}
 
@@ -93,32 +111,53 @@ export default function MatchCard({ match: rawMatch, showExchange = false, myLis
             <ScoreBar label="Complémentarité" value={match.scoreBreakdown.complementarity} />
           </div>
 
-          <div className="flex items-center gap-3 flex-wrap">
-            {match.listingId && (
-              <Link
-                to={`/listings/${match.listingId}`}
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-forest-700 hover:text-forest-900 transition-colors"
-              >
-                <TrendingUp className="w-3.5 h-3.5" />
-                Voir l'annonce
-              </Link>
-            )}
-
-            {showExchange && match.listingId && (
-              sent ? (
-                <span className="inline-flex items-center gap-1.5 text-xs text-forest-700">
-                  <CheckCircle className="w-3.5 h-3.5" /> Demande envoyée
-                </span>
-              ) : (
-                <button
-                  onClick={handleExchange}
-                  disabled={sending}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 hover:text-amber-900 transition-colors disabled:opacity-50"
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-3 flex-wrap">
+              {match.listingId && (
+                <Link
+                  to={`/listings/${match.listingId}`}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-forest-700 hover:text-forest-900 transition-colors"
                 >
-                  <ArrowLeftRight className="w-3.5 h-3.5" />
-                  {sending ? 'Envoi...' : 'Proposer un échange'}
-                </button>
-              )
+                  <TrendingUp className="w-3.5 h-3.5" aria-hidden="true" />
+                  Voir l'annonce
+                </Link>
+              )}
+
+              {showExchange && match.listingId && (
+                sent ? (
+                  <span className="inline-flex items-center gap-1.5 text-xs text-forest-700">
+                    <CheckCircle className="w-3.5 h-3.5" aria-hidden="true" /> Demande envoyée
+                  </span>
+                ) : showConfirm ? (
+                  <span className="inline-flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs text-stone-600">Confirmer l'envoi ?</span>
+                    <button
+                      onClick={handleExchange}
+                      disabled={sending}
+                      className="text-xs font-medium text-forest-700 hover:text-forest-900 transition-colors disabled:opacity-50"
+                    >
+                      {sending ? 'Envoi...' : 'Oui, envoyer'}
+                    </button>
+                    <button
+                      onClick={() => { setShowConfirm(false); setExchangeError('') }}
+                      className="text-xs text-stone-500 hover:text-stone-700 transition-colors"
+                    >
+                      Annuler
+                    </button>
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => setShowConfirm(true)}
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 hover:text-amber-900 transition-colors"
+                  >
+                    <ArrowLeftRight className="w-3.5 h-3.5" aria-hidden="true" />
+                    Proposer un échange
+                  </button>
+                )
+              )}
+            </div>
+            {exchangeError && (
+              <p className="text-xs text-red-600">{exchangeError}</p>
             )}
           </div>
         </div>

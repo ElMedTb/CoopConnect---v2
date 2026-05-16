@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { listingsApi } from '../api/listings'
 import { ArrowLeft, AlertCircle, CheckCircle } from 'lucide-react'
+import LocationPicker from '../components/listings/LocationPicker'
 
 const CATEGORIES = [
   { value: 'ELECTRONICS', label: 'Électronique' },
@@ -102,7 +103,7 @@ export default function CreateListing() {
 
         <div className="mb-8">
           <h1 className="page-header mb-1">Publier une annonce</h1>
-          <p className="text-stone-500 text-sm">L'IA analysera automatiquement votre annonce pour trouver les meilleures correspondances.</p>
+          <p className="text-stone-500 text-sm">Les meilleures correspondances seront détectées automatiquement dans votre région.</p>
         </div>
 
         {/* Progress */}
@@ -225,16 +226,15 @@ export default function CreateListing() {
                 </div>
               )}
 
-              <div>
-                <label className="label">Localisation</label>
-                <input
-                  className="input"
-                  type="text"
-                  value={form.locationText}
-                  onChange={(e) => set('locationText', e.target.value)}
-                  placeholder="Ex : Casablanca, Ain Diab"
-                />
-              </div>
+              <LocationPicker
+                latitude={form.latitude}
+                longitude={form.longitude}
+                locationText={form.locationText}
+                onChange={({ latitude, longitude, locationText }) => {
+                  setForm(p => ({ ...p, latitude, longitude, locationText }))
+                  setError('')
+                }}
+              />
 
               <div className="space-y-2">
                 <label className="label">Options de remise</label>

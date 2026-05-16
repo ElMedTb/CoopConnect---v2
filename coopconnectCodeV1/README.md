@@ -1,11 +1,11 @@
-# CoopConnect AI — Architecture & Documentation Technique
+# CoopConnect — Architecture & Documentation Technique
 
 ## Présentation du projet
 
-CoopConnect AI est une plateforme d'économie circulaire et de coopération économique au Maroc.
+CoopConnect est une plateforme d'économie circulaire et de coopération économique au Maroc.
 Elle permet aux particuliers, professionnels, coopératives et associations de publier des annonces
-de biens ou services disponibles à l'échange, et utilise un moteur d'intelligence artificielle
-pour détecter automatiquement les meilleures correspondances entre annonces.
+de biens ou services disponibles à l'échange, et utilise un moteur de matching pour détecter
+automatiquement les meilleures correspondances entre annonces.
 
 **Projet académique** — MIAGE IA · Université Côte d'Azur / EMSI Casablanca · 2025-2026
 **Équipe** : Bendahou Saad · Nyazi Walid · Qejiou Salah-Eddine · Tabrani El Mehdi
@@ -254,18 +254,28 @@ GET  /docs                  — Documentation Swagger interactive
 | Route | Description |
 |-------|-------------|
 | `/` | Landing page |
-| `/browse` | Parcourir toutes les annonces avec filtres |
+| `/browse` | Parcourir les annonces disponibles (filtre EXCHANGED automatique) |
 | `/map` | Carte géographique des annonces (Leaflet + ESRI) |
 | `/listings/:id` | Détail d'une annonce |
-| `/listings/:id/edit` | Modifier une annonce |
-| `/listings/create` | Créer une annonce |
-| `/listings/my` | Mes annonces |
+| `/listings/:id/edit` | Modifier une annonce (localisation via carte) |
+| `/listings/create` | Créer une annonce (localisation via carte ou GPS) |
+| `/listings/my` | Mes annonces actives |
 | `/dashboard` | Tableau de bord |
-| `/matches` | Recommandations IA par annonce |
+| `/matches` | Recommandations par annonce |
 | `/exchanges` | Mes demandes d'échange + messagerie |
 | `/profile` | Mon profil |
 | `/login` | Connexion |
 | `/register` | Inscription |
+
+**Notes importantes pour les développeurs backend** :
+
+1. **Filtre `EXCHANGED`** : Le frontend filtre les annonces au statut `EXCHANGED` côté client dans Browse et Mes annonces. Pour une solution propre, le endpoint `GET /api/v1/listings` devrait accepter un paramètre `?status=ACTIVE` et exclure les annonces échangées par défaut.
+
+2. **`locationText` dans le matching** : Le frontend affiche `locationText` à côté de la distance dans les cartes de recommandation si ce champ est présent dans la réponse de l'API matching. Le Core Service peut l'inclure dans l'enrichissement des résultats (`MatchingService`).
+
+3. **Texte "Utilisateur fiable"** : Le frontend filtre (regex) les mentions "Utilisateur fiable" et "Note de confiance" dans les explications générées par Gemini. Pour une solution définitive, supprimer la dimension "Score de confiance" du prompt d'explication dans `matching-service/app/matching.py`.
+
+4. **Sélecteur de localisation** : Le composant `LocationPicker` (Leaflet) utilise l'API publique Nominatim (OpenStreetMap) pour le géocodage inverse. En production, prévoir une clé API ou un service de géocodage privé.
 
 ---
 
@@ -350,11 +360,20 @@ Toutes les annonces ont des coordonnées GPS réelles correspondant à leur vill
 
 ## Équipe
 
-| Membre | Spécialité |
-|--------|------------|
+| Membre | Option |
+|--------|--------|
 | Bendahou Saad | MIAGE IA |
 | Nyazi Walid | MIAGE IA |
 | Qejiou Salah-Eddine | MIAGE IA |
-| Tabrani El Mehdi | MIAGE IA |
+| Tabrani El Mehdi | MIAGE MBDS |
 
 MIAGE — Université Côte d'Azur / EMSI Casablanca — 2025-2026
+
+---
+
+## Changelog frontend
+
+| Version | Date | Changements principaux |
+|---------|------|------------------------|
+| V1.1 | Mai 2026 | Sélecteur carte pour localisation · Mini-carte sur page annonce · Layout 3-col pour propriétaire · Filtre annonces échangées · Suppression horodatage et vues · Nom app → CoopConnect · Labels "IA" retirés · États vides améliorés · Accessibilité WCAG AA |
+| V1.0 | 2025-2026 | Prototype initial |

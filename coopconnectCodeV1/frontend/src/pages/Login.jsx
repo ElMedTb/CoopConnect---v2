@@ -67,8 +67,9 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="label">Nom d'utilisateur</label>
+              <label className="label" htmlFor="username">Nom d'utilisateur</label>
               <input
+                id="username"
                 className="input"
                 type="text"
                 name="username"
@@ -81,9 +82,10 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="label">Mot de passe</label>
+              <label className="label" htmlFor="password">Mot de passe</label>
               <div className="relative">
                 <input
+                  id="password"
                   className="input pr-10"
                   type={showPassword ? 'text' : 'password'}
                   name="password"
@@ -95,22 +97,14 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
-                  tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            <div className="flex justify-end">
-              <Link
-                to="/forgot-password"
-                className="text-xs text-forest-700 hover:text-forest-900 font-medium"
-              >
-                Mot de passe oublié ?
-              </Link>
-            </div>
 
             <button
               type="submit"

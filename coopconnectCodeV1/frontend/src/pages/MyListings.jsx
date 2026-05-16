@@ -10,7 +10,10 @@ export default function MyListings() {
 
   useEffect(() => {
     listingsApi.getMine({ size: 50 })
-      .then((res) => setListings(res.data?.content || []))
+      .then((res) => {
+        const all = res.data?.content || []
+        setListings(all.filter(l => l.status !== 'EXCHANGED'))
+      })
       .catch(() => setListings([]))
       .finally(() => setLoading(false))
   }, [])
@@ -48,8 +51,8 @@ export default function MyListings() {
           <div className="card p-12 text-center">
             <Package className="w-10 h-10 text-stone-300 mx-auto mb-4" />
             <p className="text-stone-600 font-medium mb-2">Aucune annonce publiée</p>
-            <p className="text-stone-400 text-sm mb-6">
-              Publiez votre première annonce et laissez l'IA trouver des correspondances.
+            <p className="text-stone-500 text-sm mb-6">
+              Publiez votre première annonce pour que les correspondances soient détectées automatiquement.
             </p>
             <Link to="/listings/create" className="btn-primary">
               <Plus className="w-4 h-4" />

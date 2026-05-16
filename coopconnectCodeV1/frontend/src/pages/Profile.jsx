@@ -6,6 +6,13 @@ import { listingsApi } from '../api/listings'
 import ListingCard from '../components/listings/ListingCard'
 import { User, MapPin, Phone, FileText, Lock, CheckCircle, AlertCircle, ChevronRight } from 'lucide-react'
 
+const USER_TYPE_LABELS = {
+  INDIVIDUAL: 'Particulier',
+  PROFESSIONAL: 'Professionnel',
+  BUSINESS: 'Entreprise',
+  NON_PROFIT: 'Association',
+}
+
 export default function Profile() {
   const { user, logout } = useAuth()
 
@@ -116,7 +123,7 @@ export default function Profile() {
               )}
             </div>
             <div className="ml-auto flex flex-col items-end gap-1">
-              <span className="badge-stone text-xs">{profile?.userType}</span>
+              <span className="badge-stone text-xs">{USER_TYPE_LABELS[profile?.userType] || profile?.userType}</span>
             </div>
           </div>
         </div>
@@ -159,8 +166,9 @@ export default function Profile() {
               <form onSubmit={handleInfoSave} className="card p-6 space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-stone-700 mb-1">Prénom</label>
+                    <label htmlFor="firstName" className="block text-xs font-medium text-stone-700 mb-1">Prénom</label>
                     <input
+                      id="firstName"
                       className="input w-full"
                       value={form.firstName}
                       onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))}
@@ -168,8 +176,9 @@ export default function Profile() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-stone-700 mb-1">Nom</label>
+                    <label htmlFor="lastName" className="block text-xs font-medium text-stone-700 mb-1">Nom</label>
                     <input
+                      id="lastName"
                       className="input w-full"
                       value={form.lastName}
                       onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))}
@@ -178,8 +187,9 @@ export default function Profile() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-stone-700 mb-1">Bio</label>
+                  <label htmlFor="bio" className="block text-xs font-medium text-stone-700 mb-1">Bio</label>
                   <textarea
+                    id="bio"
                     className="input w-full"
                     rows={3}
                     value={form.bio}
@@ -189,8 +199,9 @@ export default function Profile() {
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-stone-700 mb-1">Ville</label>
+                    <label htmlFor="city" className="block text-xs font-medium text-stone-700 mb-1">Ville</label>
                     <input
+                      id="city"
                       className="input w-full"
                       value={form.city}
                       onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
@@ -198,8 +209,9 @@ export default function Profile() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-stone-700 mb-1">Pays</label>
+                    <label htmlFor="country" className="block text-xs font-medium text-stone-700 mb-1">Pays</label>
                     <input
+                      id="country"
                       className="input w-full"
                       value={form.country}
                       onChange={e => setForm(f => ({ ...f, country: e.target.value }))}
@@ -208,8 +220,9 @@ export default function Profile() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-stone-700 mb-1">Téléphone</label>
+                  <label htmlFor="phoneNumber" className="block text-xs font-medium text-stone-700 mb-1">Téléphone</label>
                   <input
+                    id="phoneNumber"
                     className="input w-full"
                     value={form.phoneNumber}
                     onChange={e => setForm(f => ({ ...f, phoneNumber: e.target.value }))}
@@ -227,8 +240,9 @@ export default function Profile() {
             {tab === 'password' && (
               <form onSubmit={handlePasswordSave} className="card p-6 space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-stone-700 mb-1">Mot de passe actuel</label>
+                  <label htmlFor="currentPassword" className="block text-xs font-medium text-stone-700 mb-1">Mot de passe actuel</label>
                   <input
+                    id="currentPassword"
                     type="password"
                     className="input w-full"
                     value={pwdForm.currentPassword}
@@ -237,8 +251,9 @@ export default function Profile() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-stone-700 mb-1">Nouveau mot de passe</label>
+                  <label htmlFor="newPassword" className="block text-xs font-medium text-stone-700 mb-1">Nouveau mot de passe</label>
                   <input
+                    id="newPassword"
                     type="password"
                     className="input w-full"
                     value={pwdForm.newPassword}
@@ -248,8 +263,9 @@ export default function Profile() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-stone-700 mb-1">Confirmer le mot de passe</label>
+                  <label htmlFor="confirmPassword" className="block text-xs font-medium text-stone-700 mb-1">Confirmer le mot de passe</label>
                   <input
+                    id="confirmPassword"
                     type="password"
                     className="input w-full"
                     value={pwdForm.confirm}

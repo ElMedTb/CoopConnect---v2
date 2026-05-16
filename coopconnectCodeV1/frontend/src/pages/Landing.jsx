@@ -1,23 +1,64 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Leaf, ArrowRight, RefreshCw, MapPin, ShieldCheck, Sparkles, Users, Package, TrendingUp } from 'lucide-react'
+import { Leaf, ArrowRight, RefreshCw, MapPin, ShieldCheck, Sparkles, Package } from 'lucide-react'
 
-function StatItem({ value, label }) {
+function MockListing() {
   return (
-    <div className="text-center">
-      <p className="text-3xl font-bold text-stone-900">{value}</p>
-      <p className="text-sm text-stone-500 mt-1">{label}</p>
+    <div className="bg-white rounded-xl border border-stone-200 shadow-card p-4">
+      <div className="flex items-start gap-3 mb-3">
+        <div className="w-9 h-9 rounded-lg bg-stone-100 flex items-center justify-center shrink-0">
+          <Package className="w-4 h-4 text-stone-500" aria-hidden="true" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="text-sm font-semibold text-stone-900 leading-snug">Palettes bois EUR — 20 unités</h4>
+          <p className="text-xs text-stone-500 mt-0.5 flex items-center gap-1">
+            <MapPin className="w-3 h-3" aria-hidden="true" /> Casablanca · Outillage
+          </p>
+        </div>
+      </div>
+      <p className="text-xs text-stone-500 leading-relaxed mb-3">
+        Stock récupéré après réorganisation d'entrepôt. Palettes Europe en bon état, idéales pour usage logistique ou aménagement d'espace.
+      </p>
+      <div className="flex gap-1.5">
+        <span className="badge-green text-xs">Bon état</span>
+        <span className="badge-stone text-xs">Objet</span>
+      </div>
     </div>
   )
 }
 
-function FeatureCard({ icon: Icon, title, description }) {
+function MockMatch({ score, title, explanation, distance, dim = false }) {
+  const scoreColor = score >= 75 ? 'text-forest-700 bg-forest-50' : 'text-amber-700 bg-amber-50'
   return (
-    <div className="bg-white rounded-xl p-6 border border-stone-200 shadow-card">
-      <div className="w-10 h-10 bg-forest-50 rounded-xl flex items-center justify-center mb-4">
-        <Icon className="w-5 h-5 text-forest-700" />
+    <div className={`bg-white rounded-xl border border-stone-200 shadow-card p-4 ${dim ? 'opacity-50' : ''}`}>
+      <div className="flex items-start gap-3">
+        <div className={`shrink-0 w-11 h-11 rounded-xl flex flex-col items-center justify-center ${scoreColor}`}>
+          <span className="text-sm font-bold leading-none">{score}</span>
+          <span className="text-xs">%</span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Sparkles className="w-3.5 h-3.5 text-forest-600 shrink-0" aria-hidden="true" />
+            <p className="text-sm font-medium text-stone-900 line-clamp-1">{title}</p>
+          </div>
+          <p className="text-xs text-stone-500 italic leading-relaxed mb-2">{explanation}</p>
+          <div className="flex items-center gap-1 text-xs text-stone-500">
+            <MapPin className="w-3 h-3" aria-hidden="true" />
+            <span>{distance} km</span>
+          </div>
+        </div>
       </div>
-      <h3 className="font-semibold text-stone-900 mb-2">{title}</h3>
+    </div>
+  )
+}
+
+function FeaturePill({ icon: Icon, title, description }) {
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-2">
+        <Icon className="w-4 h-4 text-forest-700 shrink-0" aria-hidden="true" />
+        <h3 className="text-sm font-semibold text-stone-900">{title}</h3>
+      </div>
       <p className="text-sm text-stone-500 leading-relaxed">{description}</p>
     </div>
   )
@@ -47,7 +88,7 @@ export default function Landing() {
             <div className="w-7 h-7 bg-forest-800 rounded-lg flex items-center justify-center">
               <Leaf className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
-            <span className="font-semibold text-stone-900">CoopConnect AI</span>
+            <span className="font-semibold text-stone-900">CoopConnect</span>
           </div>
           <div className="flex items-center gap-4">
             <Link to="/login" className="text-sm text-stone-600 hover:text-stone-900 font-medium transition-colors">
@@ -61,18 +102,14 @@ export default function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 bg-forest-50 text-forest-800 text-xs font-medium px-3 py-1.5 rounded-full border border-forest-200 mb-6">
-          <Sparkles className="w-3.5 h-3.5" />
-          Matching intelligent par l'IA
-        </div>
+      <section className="max-w-6xl mx-auto px-6 pt-10 pb-8 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-stone-900 leading-tight mb-5">
           Transformez vos surplus
           <br />
           en opportunités
         </h1>
         <p className="text-lg text-stone-500 max-w-2xl mx-auto leading-relaxed mb-8">
-          CoopConnect AI connecte entreprises, coopératives et particuliers pour valoriser
+          CoopConnect connecte entreprises, coopératives et particuliers pour valoriser
           leurs ressources, réduire le gaspillage et développer des partenariats durables
           au Maroc.
         </p>
@@ -87,96 +124,106 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="bg-white border-y border-stone-200 py-12">
+      {/* Proof bar */}
+      <section className="bg-white border-y border-stone-200 py-4">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatItem value="2 400+" label="Utilisateurs actifs" />
-            <StatItem value="8 700+" label="Annonces publiées" />
-            <StatItem value="1 200+" label="Échanges réalisés" />
-            <StatItem value="42 t" label="CO2 évité" />
-          </div>
+          <p className="text-center text-sm text-stone-500 leading-relaxed max-w-2xl mx-auto">
+            Rejoints par{' '}
+            <span className="font-semibold text-stone-800">2 400 acteurs économiques</span>
+            {' '}— entreprises, coopératives et particuliers — qui ont publié{' '}
+            <span className="font-semibold text-stone-800">8 700 annonces</span>,{' '}
+            réalisé <span className="font-semibold text-stone-800">1 200 échanges</span>{' '}
+            et évité <span className="font-semibold text-stone-800">42 t de CO₂</span>.
+          </p>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="max-w-6xl mx-auto px-6 py-16">
-        <div className="text-center mb-10">
+      {/* Product demo */}
+      <section className="max-w-6xl mx-auto px-6 py-10">
+        <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-stone-900 mb-3">
-            Tout ce dont vous avez besoin
+            De l'annonce au match en quelques minutes
           </h2>
-          <p className="text-stone-500 max-w-xl mx-auto text-sm leading-relaxed">
-            Une plateforme complète pour structurer et optimiser vos échanges économiques.
+          <p className="text-stone-500 text-sm max-w-lg mx-auto leading-relaxed">
+            L'IA analyse contenu, catégorie et proximité géographique pour détecter les correspondances les plus pertinentes dans votre région.
           </p>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          <FeatureCard
-            icon={Sparkles}
-            title="Matching IA"
-            description="Notre moteur analyse vos annonces et détecte automatiquement les meilleures correspondances en combinant similarité de contenu, proximité géographique et complémentarité."
-          />
-          <FeatureCard
+
+        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+          <div>
+            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">Votre annonce</p>
+            <MockListing />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">Ce que l'IA détecte</p>
+            <div className="space-y-3">
+              <MockMatch
+                score={87}
+                title="Coopérative Transport Atlas"
+                explanation="Cherche palettes en bon état pour flotte logistique régionale. Correspondance contenu et proximité élevées."
+                distance={8}
+              />
+              <MockMatch
+                score={64}
+                title="Entrepôt Aïn Sebaâ Distribution"
+                explanation="Besoin régulier de palettes Europe pour réception de marchandises entrantes."
+                distance={23}
+                dim
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-6 pt-8 border-t border-stone-100">
+          <FeaturePill
             icon={RefreshCw}
             title="Économie circulaire"
-            description="Transformez vos surplus, stocks dormants et capacités inutilisées en ressources valorisées. Réduisez le gaspillage et les coûts logistiques."
+            description="Transformez surplus, stocks dormants et capacités inutilisées en ressources valorisées. Réduisez gaspillage et coûts logistiques."
           />
-          <FeatureCard
+          <FeaturePill
             icon={MapPin}
             title="Réseau local"
-            description="Connectez-vous avec des partenaires proches de vous. Notre scoring géographique favorise les échanges de proximité pour réduire l'impact carbone."
+            description="Le scoring géographique favorise les échanges de proximité pour réduire l'impact carbone et les délais de transfert."
           />
-          <FeatureCard
-            icon={Users}
-            title="Multi-acteurs"
-            description="Particuliers, TPE, PME, coopératives et associations. Toutes les formes de coopération économique en un seul endroit."
-          />
-          <FeatureCard
+          <FeaturePill
             icon={ShieldCheck}
             title="Échanges sécurisés"
-            description="Workflow d'échange complet avec gestion des accords, suivi en temps réel, système d'avis et résolution des litiges."
-          />
-          <FeatureCard
-            icon={TrendingUp}
-            title="Prédictions marché"
-            description="Anticipez les tendances locales et identifiez les opportunités avant vos concurrents grâce à nos analyses prédictives."
+            description="Workflow complet : accords formalisés, messagerie intégrée, suivi en temps réel et résolution des litiges."
           />
         </div>
       </section>
 
       {/* How it works */}
-      <section className="bg-stone-100 border-y border-stone-200 py-16">
+      <section className="bg-stone-100 border-y border-stone-200 py-10">
         <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-stone-900 mb-2">Comment ça marche</h2>
-            <p className="text-stone-500 text-sm">En trois étapes simples</p>
-          </div>
-          <div className="space-y-6 max-w-lg mx-auto">
+          <h2 className="text-2xl font-bold text-stone-900 mb-6 text-center">Comment ça marche</h2>
+          <div className="space-y-5 max-w-lg mx-auto">
             <StepItem
               number="1"
-              title="Publiez vos ressources"
-              description="Décrivez ce que vous offrez ou ce dont vous avez besoin : objets, services, compétences, espaces, surplus de production."
+              title="Publiez votre annonce"
+              description="Décrivez précisément ce que vous offrez ou ce dont vous avez besoin. Plus la description est détaillée, plus les correspondances IA seront pertinentes."
             />
             <StepItem
               number="2"
-              title="L'IA trouve les meilleures correspondances"
-              description="Notre algorithme analyse votre annonce et détecte automatiquement les partenaires les plus pertinents dans votre région."
+              title="L'IA analyse et classe"
+              description="Notre moteur combine similarité de contenu, catégorie, proximité géographique et complémentarité pour classer les meilleures correspondances dans votre région."
             />
             <StepItem
               number="3"
-              title="Échangez en toute confiance"
-              description="Contactez vos matchs, négociez les termes et formalisez votre accord via notre workflow sécurisé."
+              title="Proposez un échange"
+              description="Contactez la contrepartie de votre choix depuis la plateforme. Gérez l'accord, la messagerie et le suivi dans un workflow dédié."
             />
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="max-w-6xl mx-auto px-6 py-16 text-center">
-        <div className="bg-forest-800 rounded-2xl px-8 py-12 text-white">
+      <section className="max-w-6xl mx-auto px-6 py-8 text-center">
+        <div className="bg-forest-800 rounded-2xl px-8 py-8 text-white">
           <h2 className="text-2xl font-bold mb-3">Prêt à rejoindre le mouvement ?</h2>
-          <p className="text-forest-200 text-sm mb-6 max-w-md mx-auto leading-relaxed">
-            Rejoignez des milliers d'acteurs économiques marocains qui coopèrent intelligemment
-            grâce à CoopConnect AI.
+          <p className="text-forest-200 text-sm mb-5 max-w-md mx-auto leading-relaxed">
+            Rejoignez des milliers d'acteurs économiques marocains qui coopèrent
+            grâce à CoopConnect.
           </p>
           <Link to="/register" className="inline-flex items-center gap-2 bg-white text-forest-800 font-semibold px-6 py-3 rounded-lg text-sm hover:bg-forest-50 transition-colors">
             Créer mon compte gratuitement
@@ -186,17 +233,14 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-stone-200 py-8">
+      <footer className="border-t border-stone-200 py-5">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-forest-800 rounded-md flex items-center justify-center">
               <Leaf className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="text-sm text-stone-600 font-medium">CoopConnect AI</span>
+            <span className="text-sm text-stone-600 font-medium">CoopConnect</span>
           </div>
-          <p className="text-xs text-stone-400">
-            MIAGE Université Côte d'Azur — EMSI 2025-2026
-          </p>
           <div className="flex gap-4 text-xs text-stone-400">
             <Link to="/browse" className="hover:text-stone-600 transition-colors">Annonces</Link>
             <Link to="/login" className="hover:text-stone-600 transition-colors">Connexion</Link>
