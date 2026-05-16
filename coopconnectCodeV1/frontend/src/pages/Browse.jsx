@@ -76,7 +76,7 @@ export default function Browse() {
     const next = new URLSearchParams(searchParams)
     if (value) next.set(key, value)
     else next.delete(key)
-    next.delete('page')
+    if (key !== 'page') next.delete('page')
     setSearchParams(next)
   }
 
@@ -93,7 +93,7 @@ export default function Browse() {
   const hasFilters = query || category || type
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Header */}
         <div className="mb-6">

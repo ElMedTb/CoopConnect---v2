@@ -40,7 +40,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col justify-center">
+    <div className="min-h-screen bg-stone-100 flex flex-col justify-center">
       <div className="w-full max-w-sm mx-auto px-4">
         {/* Logo */}
         <div className="flex justify-center mb-8">

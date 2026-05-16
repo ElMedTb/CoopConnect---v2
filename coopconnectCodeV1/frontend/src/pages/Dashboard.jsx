@@ -45,7 +45,7 @@ export default function Dashboard() {
   const isFirstRun = !loading && !loadError && myListings.length === 0 && exchanges.length === 0
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
         {/* Header */}

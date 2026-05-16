@@ -115,7 +115,7 @@ export default function EditListing() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-100 flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-forest-700 border-t-transparent rounded-full animate-spin" />
       </div>
     )
@@ -123,7 +123,7 @@ export default function EditListing() {
 
   if (notFound) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-100 flex items-center justify-center">
         <div className="text-center">
           <p className="text-stone-500 mb-4">Annonce introuvable ou accès refusé.</p>
           <Link to="/listings/my" className="btn-secondary text-sm">Mes annonces</Link>
@@ -133,7 +133,7 @@ export default function EditListing() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-100">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
         <div className="flex items-center justify-between mb-6">
           <Link

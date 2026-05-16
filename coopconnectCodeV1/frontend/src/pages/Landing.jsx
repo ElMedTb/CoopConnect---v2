@@ -80,9 +80,9 @@ function StepItem({ number, title, description }) {
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-100">
       {/* Header */}
-      <header className="bg-white border-b border-stone-200 sticky top-0 z-50">
+      <header className="border-b border-stone-200 sticky top-0 z-50" style={{ background: 'rgba(238,241,230,0.85)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-14">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 bg-forest-800 rounded-lg flex items-center justify-center">
@@ -102,30 +102,52 @@ export default function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="max-w-6xl mx-auto px-6 pt-10 pb-8 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-stone-900 leading-tight mb-5">
-          Transformez vos surplus
-          <br />
-          en opportunités
-        </h1>
-        <p className="text-lg text-stone-500 max-w-2xl mx-auto leading-relaxed mb-8">
-          CoopConnect connecte entreprises, coopératives et particuliers pour valoriser
-          leurs ressources, réduire le gaspillage et développer des partenariats durables
-          au Maroc.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link to="/register" className="btn-primary px-6 py-3 text-sm">
-            Rejoindre la plateforme
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link to="/browse" className="btn-secondary px-6 py-3 text-sm">
-            Explorer les annonces
-          </Link>
+      <section className="max-w-6xl mx-auto px-6 pt-10 pb-8">
+        <div className="grid lg:grid-cols-2 gap-10 items-center">
+
+          {/* Illustration — left */}
+          <div className="order-2 lg:order-1 flex items-center justify-center" style={{ overflow: 'hidden' }}>
+            <img
+              src="/exchange-illustration.png"
+              alt="Deux mains s'échangeant des objets"
+              style={{
+                width: '110%',
+                maxWidth: 'none',
+                display: 'block',
+                borderRadius: '5rem',
+                maskImage: 'radial-gradient(ellipse 75% 80% at 50% 50%, black 30%, transparent 100%)',
+                WebkitMaskImage: 'radial-gradient(ellipse 75% 80% at 50% 50%, black 30%, transparent 100%)',
+              }}
+            />
+          </div>
+
+          {/* Text — right */}
+          <div className="order-1 lg:order-2 text-center lg:text-left">
+            <h1 className="text-4xl md:text-5xl font-bold text-stone-800 leading-tight mb-5 font-display" style={{ letterSpacing: '-0.022em' }}>
+              Transformez vos surplus
+              <br />
+              en opportunités
+            </h1>
+            <p className="text-lg text-stone-500 leading-relaxed mb-8 max-w-lg">
+              CoopConnect connecte entreprises, coopératives et particuliers pour valoriser
+              leurs ressources, réduire le gaspillage et développer des partenariats durables.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+              <Link to="/register" className="btn-primary px-6 py-3 text-sm">
+                Rejoindre la plateforme
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link to="/browse" className="btn-secondary px-6 py-3 text-sm">
+                Explorer les annonces
+              </Link>
+            </div>
+          </div>
+
         </div>
       </section>
 
       {/* Proof bar */}
-      <section className="bg-white border-y border-stone-200 py-4">
+      <section className="bg-stone-50 border-y border-stone-200 py-4">
         <div className="max-w-6xl mx-auto px-6">
           <p className="text-center text-sm text-stone-500 leading-relaxed max-w-2xl mx-auto">
             Rejoints par{' '}
@@ -141,7 +163,7 @@ export default function Landing() {
       {/* Product demo */}
       <section className="max-w-6xl mx-auto px-6 py-10">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-stone-900 mb-3">
+          <h2 className="text-2xl font-bold text-stone-800 mb-3 font-display" style={{ letterSpacing: '-0.015em' }}>
             De l'annonce au match en quelques minutes
           </h2>
           <p className="text-stone-500 text-sm max-w-lg mx-auto leading-relaxed">
@@ -196,7 +218,7 @@ export default function Landing() {
       {/* How it works */}
       <section className="bg-stone-100 border-y border-stone-200 py-10">
         <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-2xl font-bold text-stone-900 mb-6 text-center">Comment ça marche</h2>
+          <h2 className="text-2xl font-bold text-stone-800 mb-6 text-center font-display" style={{ letterSpacing: '-0.015em' }}>Comment ça marche</h2>
           <div className="space-y-5 max-w-lg mx-auto">
             <StepItem
               number="1"
@@ -220,7 +242,7 @@ export default function Landing() {
       {/* CTA */}
       <section className="max-w-6xl mx-auto px-6 py-8 text-center">
         <div className="bg-forest-800 rounded-2xl px-8 py-8 text-white">
-          <h2 className="text-2xl font-bold mb-3">Prêt à rejoindre le mouvement ?</h2>
+          <h2 className="text-2xl font-bold mb-3 font-display" style={{ letterSpacing: '-0.015em' }}>Prêt à rejoindre le mouvement ?</h2>
           <p className="text-forest-200 text-sm mb-5 max-w-md mx-auto leading-relaxed">
             Rejoignez des milliers d'acteurs économiques marocains qui coopèrent
             grâce à CoopConnect.

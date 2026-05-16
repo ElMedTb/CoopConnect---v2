@@ -95,14 +95,14 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-100 flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-forest-700 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
 
         {/* Header */}

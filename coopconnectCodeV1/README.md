@@ -186,7 +186,9 @@ HEALTH_BEAUTY, AUTOMOTIVE, OTHER
 
 Le service reçoit une annonce "requête" et une liste d'annonces "candidates".
 Pour chaque candidate, il calcule un **score composite** entre 0 et 1 à partir
-de 6 dimensions :
+de 5 dimensions. **La valeur estimée et la distance sont les deux critères dominants**
+(60% du score total), reflétant la logique de troc : on échange des biens de valeur
+comparable, le plus près possible.
 
 ```
 Score final = Σ (poids_i × score_i)
@@ -194,23 +196,76 @@ Score final = Σ (poids_i × score_i)
 
 | Dimension | Poids | Méthode de calcul |
 |-----------|-------|-------------------|
-| Similarité de contenu | 30% | TF-IDF bigramme + similarité cosinus |
-| Correspondance catégorie | 20% | Correspondance exacte ou catégories complémentaires |
-| Proximité géographique | 20% | Distance haversine (km) entre les coordonnées GPS |
-| Complémentarité offre/besoin | 15% | OFFER vs NEED, analyse sémantique |
-| Proximité de valeur estimée | 10% | Estimation de prix par Gemini AI |
-| Score de confiance | 5% | Note de confiance du propriétaire (0-5) |
+| **Proximité de valeur estimée** | **35%** | Estimation MAD par Gemini · tolérance barter ±30% |
+| **Proximité géographique** | **25%** | Distance haversine (km) entre les coordonnées GPS |
+| Similarité de contenu | 20% | TF-IDF bigramme + similarité cosinus |
+| Correspondance catégorie | 10% | Correspondance exacte ou catégories complémentaires |
+| Complémentarité offre/besoin | 10% | OFFER vs NEED, analyse sémantique |
 
-#### TF-IDF bigramme (30% du score)
+> **Supprimé** : le "Score de confiance" (5%) a été retiré du scoring et des explications Gemini.
 
-Chaque annonce est représentée par un vecteur TF-IDF calculé sur son titre + description.
-Le vectoriseur utilise des bigrammes (paires de mots consécutifs) ce qui capture
-le contexte ("tomates bio", "panneau solaire", etc.). La similarité cosinus entre
-les vecteurs mesure à quel point les contenus sont proches sémantiquement.
+---
 
-Exemple : "Surplus 600kg tomates bio" ↔ "Recherche fournisseur légumes frais" → score élevé.
+#### Proximité de valeur estimée (35% du score) ← PRIORITÉ MAXIMALE
 
-#### Proximité géographique (20% du score)
+C'est le critère le plus important du moteur. CoopConnect est une plateforme de **troc**
+(échange sans monnaie), donc recommander des biens de valeur radicalement différente
+n'a aucun sens. Le moteur doit favoriser les échanges équilibrés.
+
+**Étape 1 — Estimation à la création de l'annonce (recommandé)**
+
+L'estimation de valeur doit être calculée **une seule fois**, au moment de la création
+ou de la modification d'une annonce, et stockée dans le champ `estimatedValueMAD` de
+l'entité `Listing` (à ajouter dans le Core Service).
+
+Le Core Service appelle le Matching AI après la sauvegarde de l'annonce :
+```
+POST /api/match/estimate
+{ "title": "...", "description": "...", "category": "...", "condition": "..." }
+→ { "estimated_value_mad": 850.0, "currency": "MAD" }
+```
+
+La valeur est persistée en base et transmise dans le tableau de candidats lors du matching.
+Ce design évite N appels Gemini par requête de matching (latence réduite de ~60%).
+
+**Étape 2 — Prompt Gemini pour l'estimation (marché marocain)**
+
+Le prompt doit contextualiser l'estimation au marché marocain :
+
+```
+Tu es un expert du marché de l'occasion au Maroc. Estime la valeur marchande
+de l'objet ou service décrit ci-dessous en dirhams marocains (MAD).
+Prends en compte les prix réels du marché marocain (Avito.ma, Jumia Maroc,
+marchés locaux). Réponds uniquement avec un nombre entier.
+
+Titre : {title}
+Description : {description}
+Catégorie : {category}
+État : {condition}
+```
+
+**Étape 3 — Calcul du score de proximité de valeur**
+
+La logique de troc tolère une marge d'écart : des biens dont les valeurs diffèrent
+de moins de 30% sont considérés échangeables sans déséquilibre majeur.
+
+```python
+def value_score(val_a, val_b):
+    if val_a is None or val_b is None or max(val_a, val_b) == 0:
+        return 0.5  # valeur inconnue → score neutre
+    ratio = abs(val_a - val_b) / max(val_a, val_b)
+    # Score 1.0 si écart < 10%, décroissance douce jusqu'à 30%, puis steep
+    if ratio <= 0.10:
+        return 1.0
+    elif ratio <= 0.30:
+        return 1.0 - (ratio - 0.10) / 0.20 * 0.3   # 1.0 → 0.7
+    else:
+        return max(0.0, 0.7 - (ratio - 0.30) * 1.4)  # descente rapide
+```
+
+---
+
+#### Proximité géographique (25% du score) ← 2e PRIORITÉ
 
 Distance calculée par la formule haversine (distance orthodromique sur la sphère terrestre)
 entre les coordonnées GPS des deux annonces. La fonction de score décroît avec la distance :
@@ -219,22 +274,25 @@ entre les coordonnées GPS des deux annonces. La fonction de score décroît ave
 - 50 km → score ~0.45
 - 100 km → score ~0.22
 
-#### Estimation de prix par Gemini (10% du score)
+---
 
-Pour chaque annonce, le service appelle l'API **Gemini 2.5 Flash** (Google) avec un prompt
-en français décrivant l'annonce. Gemini retourne une estimation du prix de marché en MAD.
+#### TF-IDF bigramme (20% du score)
 
-Cette estimation est mise en **cache en mémoire** (par ID d'annonce) pour éviter
-les appels répétés. La proximité de prix est calculée comme :
+Chaque annonce est représentée par un vecteur TF-IDF calculé sur son titre + description.
+Le vectoriseur utilise des bigrammes (paires de mots consécutifs) ce qui capture
+le contexte ("tomates bio", "panneau solaire", etc.). La similarité cosinus entre
+les vecteurs mesure à quel point les contenus sont proches sémantiquement.
 
-```
-score_prix = max(0, 1 - |prix_A - prix_B| / max(prix_A, prix_B))
-```
+Exemple : "Surplus 600kg tomates bio" ↔ "Recherche fournisseur légumes frais" → score élevé.
+
+---
 
 #### Explication générée
 
 Pour chaque correspondance, le service génère une explication textuelle en français
-décrivant pourquoi les deux annonces sont compatibles.
+décrivant pourquoi les deux annonces sont compatibles. **L'explication doit mentionner
+la compatibilité de valeur estimée** (ex : "Valeurs estimées comparables : ~800 MAD / ~950 MAD").
+Ne pas mentionner le score de confiance ou la fiabilité de l'utilisateur.
 
 **Endpoints** :
 ```
@@ -269,13 +327,24 @@ GET  /docs                  — Documentation Swagger interactive
 
 **Notes importantes pour les développeurs backend** :
 
-1. **Filtre `EXCHANGED`** : Le frontend filtre les annonces au statut `EXCHANGED` côté client dans Browse et Mes annonces. Pour une solution propre, le endpoint `GET /api/v1/listings` devrait accepter un paramètre `?status=ACTIVE` et exclure les annonces échangées par défaut.
+1. **[PRIORITÉ] Nouveau scoring matching** : Revoir les poids dans `matching-service/app/matching.py` :
+   - Valeur estimée → **35%** (était 10%)
+   - Distance → **25%** (était 20%)
+   - TF-IDF contenu → 20% (était 30%)
+   - Catégorie → 10% (était 20%)
+   - Complémentarité offre/besoin → 10% (était 15%)
+   - Score de confiance → **supprimé** (était 5%)
+   Voir la section "Proximité de valeur estimée" ci-dessus pour le prompt Gemini et la fonction `value_score()`.
 
-2. **`locationText` dans le matching** : Le frontend affiche `locationText` à côté de la distance dans les cartes de recommandation si ce champ est présent dans la réponse de l'API matching. Le Core Service peut l'inclure dans l'enrichissement des résultats (`MatchingService`).
+2. **[PRIORITÉ] Estimation de valeur à la création** : Ajouter le champ `estimatedValueMAD` (Double, nullable) à l'entité `Listing`. Après `listingRepository.save()`, appeler le endpoint `/api/match/estimate` du Matching AI de manière asynchrone (ne pas bloquer la réponse HTTP) et persister la valeur retournée. Exposer un endpoint `POST /api/match/estimate` dans le Matching AI si absent.
 
-3. **Texte "Utilisateur fiable"** : Le frontend filtre (regex) les mentions "Utilisateur fiable" et "Note de confiance" dans les explications générées par Gemini. Pour une solution définitive, supprimer la dimension "Score de confiance" du prompt d'explication dans `matching-service/app/matching.py`.
+3. **Filtre `EXCHANGED`** : Le frontend filtre les annonces au statut `EXCHANGED` côté client dans Browse et Mes annonces. Pour une solution propre, le endpoint `GET /api/v1/listings` devrait accepter un paramètre `?status=ACTIVE` et exclure les annonces échangées par défaut.
 
-4. **Sélecteur de localisation** : Le composant `LocationPicker` (Leaflet) utilise l'API publique Nominatim (OpenStreetMap) pour le géocodage inverse. En production, prévoir une clé API ou un service de géocodage privé.
+4. **`locationText` dans le matching** : Le frontend affiche `locationText` à côté de la distance dans les cartes de recommandation si ce champ est présent dans la réponse de l'API matching. Le Core Service peut l'inclure dans l'enrichissement des résultats (`MatchingService`).
+
+5. **Texte "Utilisateur fiable"** : Le frontend filtre (regex) les mentions "Utilisateur fiable" et "Note de confiance" dans les explications Gemini. Pour une solution définitive, supprimer cette dimension du prompt dans `matching-service/app/matching.py`.
+
+6. **Sélecteur de localisation** : Le composant `LocationPicker` (Leaflet) utilise l'API publique Nominatim (OpenStreetMap) pour le géocodage inverse. En production, prévoir une clé API ou un service de géocodage privé.
 
 ---
 
@@ -371,9 +440,10 @@ MIAGE — Université Côte d'Azur / EMSI Casablanca — 2025-2026
 
 ---
 
-## Changelog frontend
+## Changelog
 
 | Version | Date | Changements principaux |
 |---------|------|------------------------|
-| V1.1 | Mai 2026 | Sélecteur carte pour localisation · Mini-carte sur page annonce · Layout 3-col pour propriétaire · Filtre annonces échangées · Suppression horodatage et vues · Nom app → CoopConnect · Labels "IA" retirés · États vides améliorés · Accessibilité WCAG AA |
+| V1.2 | Mai 2026 | **Matching** : poids valeur estimée → 35% (priorité max), distance → 25%, score confiance supprimé · Spécification estimation MAD via Gemini (marché marocain) · Spécification `estimatedValueMAD` dans entité Listing · Carte MapView : barre de contrôle transparente + carte arrondie avec marges · Landing : illustration échange avec fondu de bords |
+| V1.1 | Mai 2026 | Sélecteur carte pour localisation · Mini-carte sur page annonce · Layout 3-col pour propriétaire · Filtre annonces échangées · Suppression horodatage et vues · Nom app → CoopConnect · Labels "IA" retirés · États vides améliorés · Accessibilité WCAG AA · Design system Refont 2026 (Manrope + Bricolage Grotesque, palette parchment/moss/clay) |
 | V1.0 | 2025-2026 | Prototype initial |

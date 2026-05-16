@@ -60,7 +60,7 @@ export default function Register() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-stone-50 flex flex-col justify-center">
+      <div className="min-h-screen bg-stone-100 flex flex-col justify-center">
         <div className="w-full max-w-sm mx-auto px-4 text-center">
           <div className="card p-8">
             <div className="w-14 h-14 bg-forest-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -75,7 +75,7 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col justify-center py-8">
+    <div className="min-h-screen bg-stone-100 flex flex-col justify-center py-8">
       <div className="w-full max-w-md mx-auto px-4">
         <div className="flex justify-center mb-8">
           <Link to="/" className="flex items-center gap-2">

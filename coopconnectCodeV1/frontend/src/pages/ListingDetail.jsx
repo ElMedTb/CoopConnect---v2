@@ -272,7 +272,7 @@ export default function ListingDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-stone-50">
+      <div className="min-h-screen bg-stone-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
           <div className="animate-pulse space-y-4">
             <div className="h-6 bg-stone-200 rounded w-1/3" />
@@ -287,7 +287,7 @@ export default function ListingDetail() {
 
   if (error || !listing) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-100 flex items-center justify-center">
         <div className="text-center">
           <Package className="w-10 h-10 text-stone-300 mx-auto mb-3" />
           <p className="text-stone-500 mb-4">{error || 'Annonce introuvable.'}</p>
@@ -300,7 +300,7 @@ export default function ListingDetail() {
   const statusConf = STATUS_CONFIG[listing.status] || { label: listing.status, color: 'badge-stone' }
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <Link to="/browse" className="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-700 mb-6 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" />

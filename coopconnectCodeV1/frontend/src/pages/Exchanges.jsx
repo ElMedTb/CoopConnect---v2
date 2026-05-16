@@ -287,7 +287,7 @@ export default function Exchanges() {
   const pending = exchanges.filter(e => e.status === 'REQUESTED' && e.providerUsername === user?.username).length
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-100">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
         <div className="flex items-center gap-3 mb-6">
           <Link to="/profile" className="text-stone-500 hover:text-stone-700 transition-colors">

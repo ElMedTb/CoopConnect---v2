@@ -52,7 +52,7 @@ export default function Matches() {
 
   if (loadingListings) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-100 flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-forest-700 border-t-transparent rounded-full animate-spin" />
       </div>
     )
@@ -60,7 +60,7 @@ export default function Matches() {
 
   if (myListings.length === 0) {
     return (
-      <div className="min-h-screen bg-stone-50">
+      <div className="min-h-screen bg-stone-100">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-16 text-center">
           <div className="w-14 h-14 bg-forest-50 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-forest-100">
             <Sparkles className="w-7 h-7 text-forest-700" aria-hidden="true" />
@@ -88,7 +88,7 @@ export default function Matches() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
         <div className="flex items-center gap-2 mb-6">

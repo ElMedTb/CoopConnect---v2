@@ -94,7 +94,7 @@ export default function CreateListing() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-100">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
         <Link to="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-700 mb-6 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" />

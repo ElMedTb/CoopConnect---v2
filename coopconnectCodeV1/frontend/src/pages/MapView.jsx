@@ -216,13 +216,13 @@ export default function MapView() {
   const categories = [...new Set(listings.map(l => l.category).filter(Boolean))]
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 56px)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 56px)', background: '#EEF1E6' }}>
 
       {/* Barre de contrôle */}
       <div style={{
-        background: 'white', borderBottom: '1px solid #e7e5e4',
+        background: 'transparent',
         padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0,
-        overflowX: 'auto', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+        overflowX: 'auto',
       }}>
         <span style={{ fontSize: 13, fontWeight: 600, color: '#1c1917', whiteSpace: 'nowrap' }}>
           Carte · <span style={{ color: '#78716c', fontWeight: 400 }}>{count} annonce{count !== 1 ? 's' : ''}</span>
@@ -278,24 +278,32 @@ export default function MapView() {
       </div>
 
       {/* Conteneur carte */}
-      <div style={{ flex: 1, position: 'relative' }}>
-        {loading && (
-          <div style={{
-            position: 'absolute', inset: 0, background: '#f5f5f4',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999,
-          }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{
-                width: 32, height: 32, border: '3px solid #166534',
-                borderTopColor: 'transparent', borderRadius: '50%',
-                animation: 'spin 0.8s linear infinite', margin: '0 auto 8px',
-              }} />
-              <p style={{ fontSize: 13, color: '#78716c' }}>Chargement des annonces...</p>
+      <div style={{ flex: 1, padding: '0 16px 16px', minHeight: 0 }}>
+        <div style={{
+          position: 'relative', height: '100%',
+          borderRadius: '1.5rem', overflow: 'hidden',
+          border: '1px solid rgba(42,46,34,0.12)',
+          boxShadow: '0 4px 24px rgba(42,46,34,0.10)',
+        }}>
+          {loading && (
+            <div style={{
+              position: 'absolute', inset: 0, background: '#f5f5f4',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999,
+              borderRadius: '1.5rem',
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{
+                  width: 32, height: 32, border: '3px solid #166534',
+                  borderTopColor: 'transparent', borderRadius: '50%',
+                  animation: 'spin 0.8s linear infinite', margin: '0 auto 8px',
+                }} />
+                <p style={{ fontSize: 13, color: '#78716c' }}>Chargement des annonces...</p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div ref={mapRef} style={{ height: '100%', width: '100%' }} />
+          <div ref={mapRef} style={{ height: '100%', width: '100%' }} />
+        </div>
       </div>
 
       <style>{`

@@ -39,7 +39,7 @@ export default function Navbar() {
     }`
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-stone-200">
+    <header className="sticky top-0 z-50 border-b border-stone-200" style={{ background: 'rgba(238,241,230,0.85)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
@@ -47,7 +47,7 @@ export default function Navbar() {
             <div className="w-7 h-7 bg-forest-800 rounded-lg flex items-center justify-center">
               <Leaf className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
-            <span className="font-semibold text-stone-900 text-sm">CoopConnect</span>
+            <span className="font-semibold text-stone-800 text-sm font-display">CoopConnect</span>
           </Link>
 
           {/* Desktop nav */}
