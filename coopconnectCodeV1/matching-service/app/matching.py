@@ -18,12 +18,11 @@ COMPLEMENTARY_PAIRS = {
 }
 
 WEIGHTS = {
-    "content": 0.30,
-    "category": 0.20,
-    "geo": 0.20,
-    "complementarity": 0.15,
-    "price": 0.10,
-    "trust": 0.05,
+    "content": 0.20,
+    "category": 0.10,
+    "geo": 0.25,
+    "complementarity": 0.10,
+    "price": 0.35,
 }
 
 
@@ -137,10 +136,6 @@ def _build_explanation(
         else:
             parts.append(f"à {int(dist_km)} km")
 
-    trust = candidate.owner_trust_score or 0
-    if trust >= 4.0:
-        parts.append(f"utilisateur fiable ({trust:.1f}/5)")
-
     if not parts:
         parts.append(f"score de compatibilité : {int(score * 100)}%")
 
@@ -185,7 +180,6 @@ def compute_matches(
         category = _category_score(query, candidate)
         geo, dist_km = _geo_score(query, candidate, max_distance_km)
         complementarity = _complementarity_score(query, candidate)
-        trust = _trust_score(candidate)
 
         if dist_km is not None and dist_km > max_distance_km:
             continue
@@ -199,7 +193,6 @@ def compute_matches(
             + geo * WEIGHTS["geo"]
             + complementarity * WEIGHTS["complementarity"]
             + price * WEIGHTS["price"]
-            + trust * WEIGHTS["trust"]
         )
 
         breakdown = ScoreBreakdown(
@@ -208,7 +201,7 @@ def compute_matches(
             geo_score=round(geo, 3),
             complementarity=round(complementarity, 3),
             price_proximity=round(price, 3),
-            trust_weight=round(trust, 3),
+            trust_weight=0.0,
         )
 
         explanation = _build_explanation(

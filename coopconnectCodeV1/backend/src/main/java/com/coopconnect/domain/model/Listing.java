@@ -158,12 +158,11 @@ public class Listing extends BaseEntity {
     private List<ListingTag> tags;
 
     /**
-     * Enum for listing categories
+     * Enum for listing categories — physical goods only (barter platform)
      */
     public enum ListingCategory {
         ELECTRONICS, CLOTHING, HOME_GARDEN, SPORTS_OUTDOORS, BOOKS_MEDIA,
-        TOYS_GAMES, HEALTH_BEAUTY, AUTOMOTIVE, TOOLS, SERVICES,
-        SKILLS_EDUCATION, TRANSPORTATION, REAL_ESTATE, PETS, OTHER
+        TOYS_GAMES, HEALTH_BEAUTY, AUTOMOTIVE, TOOLS, PETS, OTHER
     }
 
     /**
@@ -175,16 +174,14 @@ public class Listing extends BaseEntity {
         // Clothing
         MENS_CLOTHING, WOMENS_CLOTHING, CHILDRENS_CLOTHING, SHOES, ACCESSORIES,
         // Home & Garden
-        FURNITURE, APPLIANCES, DECOR, KITCHEN, GARDEN_TOOLS,
-        // Services
-        HOME_SERVICES, PROFESSIONAL_SERVICES, EDUCATION, HEALTHCARE, TRANSPORT
+        FURNITURE, APPLIANCES, DECOR, KITCHEN, GARDEN_TOOLS
     }
 
     /**
-     * Enum for listing types
+     * Enum for listing types — physical goods only
      */
     public enum ListingType {
-        ITEM, SERVICE, SKILL, SPACE, TRANSPORT
+        ITEM
     }
 
     /**

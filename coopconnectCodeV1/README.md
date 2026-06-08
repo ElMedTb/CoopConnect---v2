@@ -142,9 +142,15 @@ Mot de passe universel : `Test1234!`
 - Mes annonces (`/my`) → retourne les annonces de l'utilisateur connecté
 - Soft-delete (les annonces supprimées passent en statut `DELETED`, non visibles)
 
-**Catégories disponibles** : ELECTRONICS, CLOTHING, HOME_GARDEN, TOOLS, SERVICES,
-SKILLS_EDUCATION, SPORTS_OUTDOORS, BOOKS_MEDIA, TRANSPORTATION, REAL_ESTATE,
-HEALTH_BEAUTY, AUTOMOTIVE, OTHER
+**Catégories disponibles** (biens physiques uniquement) :
+ELECTRONICS, CLOTHING, HOME_GARDEN, TOOLS, SPORTS_OUTDOORS, BOOKS_MEDIA,
+HEALTH_BEAUTY, AUTOMOTIVE, TOYS_GAMES, PETS, OTHER
+
+> **Supprimé** : SERVICES, SKILLS_EDUCATION, TRANSPORTATION, REAL_ESTATE — CoopConnect est une
+> plateforme de **troc de biens physiques** (échange non-monétaire tangible). Les prestations de
+> service, formations, transport et locations immobilières ne correspondent pas au concept.
+
+**Type d'annonce** : `ITEM` uniquement (bien physique). Les types SERVICE, SKILL, SPACE, TRANSPORT ont été supprimés.
 
 **Statuts d'annonce** : ACTIVE, DRAFT, EXCHANGED, SUSPENDED, DELETED
 
@@ -444,6 +450,7 @@ MIAGE — Université Côte d'Azur / EMSI Casablanca — 2025-2026
 
 | Version | Date | Changements principaux |
 |---------|------|------------------------|
+| V1.3 | Juin 2026 | **Concept troc clarifié** : suppression catégories SERVICES/SKILLS_EDUCATION/TRANSPORTATION/REAL_ESTATE et types SERVICE/SKILL/SPACE/TRANSPORT partout (backend enum, DataSeeder, frontend) · ~40 annonces demo service retirées · **Matching AI** : poids valeur → 35%, distance → 25%, trust supprimé, price_proximity_score avec tolérance troc ±30% · Prompt Gemini MAD contextualisé marché marocain · Favicon leaf + titre onglet "CoopConnect" · Fix pagination Browse |
 | V1.2 | Mai 2026 | **Matching** : poids valeur estimée → 35% (priorité max), distance → 25%, score confiance supprimé · Spécification estimation MAD via Gemini (marché marocain) · Spécification `estimatedValueMAD` dans entité Listing · Carte MapView : barre de contrôle transparente + carte arrondie avec marges · Landing : illustration échange avec fondu de bords |
 | V1.1 | Mai 2026 | Sélecteur carte pour localisation · Mini-carte sur page annonce · Layout 3-col pour propriétaire · Filtre annonces échangées · Suppression horodatage et vues · Nom app → CoopConnect · Labels "IA" retirés · États vides améliorés · Accessibilité WCAG AA · Design system Refont 2026 (Manrope + Bricolage Grotesque, palette parchment/moss/clay) |
 | V1.0 | 2025-2026 | Prototype initial |

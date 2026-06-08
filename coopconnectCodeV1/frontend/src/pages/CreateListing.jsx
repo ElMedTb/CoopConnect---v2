@@ -12,20 +12,9 @@ const CATEGORIES = [
   { value: 'BOOKS_MEDIA', label: 'Livres & Médias' },
   { value: 'TOYS_GAMES', label: 'Jouets & Jeux' },
   { value: 'HEALTH_BEAUTY', label: 'Santé & Beauté' },
-  { value: 'AUTOMOTIVE', label: 'Automobile' },
+  { value: 'AUTOMOTIVE', label: 'Auto & Véhicules' },
   { value: 'TOOLS', label: 'Outillage' },
-  { value: 'SERVICES', label: 'Services' },
-  { value: 'SKILLS_EDUCATION', label: 'Compétences & Formation' },
-  { value: 'TRANSPORTATION', label: 'Transport' },
   { value: 'OTHER', label: 'Autre' },
-]
-
-const TYPES = [
-  { value: 'ITEM', label: 'Objet physique', desc: 'Produit, matière première, équipement' },
-  { value: 'SERVICE', label: 'Service', desc: 'Prestation, aide ponctuelle' },
-  { value: 'SKILL', label: 'Compétence', desc: 'Expertise, savoir-faire, formation' },
-  { value: 'SPACE', label: 'Espace', desc: 'Local, entrepôt, terrain' },
-  { value: 'TRANSPORT', label: 'Transport', desc: 'Véhicule, capacité logistique' },
 ]
 
 const CONDITIONS = [
@@ -137,27 +126,6 @@ export default function CreateListing() {
         <div className="card p-6">
           {step === 1 && (
             <div className="space-y-5">
-              <div>
-                <label className="label">Type d'annonce</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {TYPES.map((t) => (
-                    <button
-                      key={t.value}
-                      type="button"
-                      onClick={() => set('type', t.value)}
-                      className={`text-left p-3 rounded-lg border transition-all ${
-                        form.type === t.value
-                          ? 'border-forest-700 bg-forest-50'
-                          : 'border-stone-200 hover:border-stone-300'
-                      }`}
-                    >
-                      <p className="text-sm font-medium text-stone-900">{t.label}</p>
-                      <p className="text-xs text-stone-500 mt-0.5">{t.desc}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <div>
                 <label className="label">Titre <span className="text-red-500">*</span></label>
                 <input

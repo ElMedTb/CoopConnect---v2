@@ -12,12 +12,12 @@ import {
 const CATEGORY_LABELS = {
   ELECTRONICS: 'Électronique', CLOTHING: 'Vêtements', HOME_GARDEN: 'Maison & Jardin',
   SPORTS_OUTDOORS: 'Sport', BOOKS_MEDIA: 'Livres & Médias', TOOLS: 'Outillage',
-  SERVICES: 'Services', SKILLS_EDUCATION: 'Compétences', OTHER: 'Autre',
+  HEALTH_BEAUTY: 'Santé & Beauté', AUTOMOTIVE: 'Auto & Véhicules',
+  TOYS_GAMES: 'Jouets & Jeux', PETS: 'Animaux', OTHER: 'Autre',
 }
 
 const TYPE_LABELS = {
-  ITEM: 'Objet', SERVICE: 'Service', SKILL: 'Compétence',
-  SPACE: 'Espace', TRANSPORT: 'Transport',
+  ITEM: 'Bien physique',
 }
 
 const CONDITION_LABELS = {

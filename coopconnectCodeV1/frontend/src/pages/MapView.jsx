@@ -4,26 +4,24 @@ import { listingsApi } from '../api/listings'
 import { Navigation } from 'lucide-react'
 
 const CATEGORY_COLORS = {
-  ELECTRONICS:      '#3b82f6',
-  CLOTHING:         '#ec4899',
-  HOME_GARDEN:      '#22c55e',
-  TOOLS:            '#f97316',
-  SERVICES:         '#8b5cf6',
-  SKILLS_EDUCATION: '#06b6d4',
-  SPORTS_OUTDOORS:  '#eab308',
-  BOOKS_MEDIA:      '#6366f1',
-  TRANSPORTATION:   '#14b8a6',
-  REAL_ESTATE:      '#64748b',
-  HEALTH_BEAUTY:    '#f43f5e',
-  AUTOMOTIVE:       '#78716c',
-  OTHER:            '#059669',
+  ELECTRONICS:   '#3b82f6',
+  CLOTHING:      '#ec4899',
+  HOME_GARDEN:   '#22c55e',
+  TOOLS:         '#f97316',
+  SPORTS_OUTDOORS: '#eab308',
+  BOOKS_MEDIA:   '#6366f1',
+  HEALTH_BEAUTY: '#f43f5e',
+  AUTOMOTIVE:    '#78716c',
+  TOYS_GAMES:    '#8b5cf6',
+  PETS:          '#14b8a6',
+  OTHER:         '#059669',
 }
 
 const CATEGORY_LABELS = {
   ELECTRONICS: 'Électronique', CLOTHING: 'Vêtements', HOME_GARDEN: 'Maison',
-  TOOLS: 'Outillage', SERVICES: 'Services', SKILLS_EDUCATION: 'Compétences',
-  SPORTS_OUTDOORS: 'Sport', BOOKS_MEDIA: 'Livres', TRANSPORTATION: 'Transport',
-  REAL_ESTATE: 'Immobilier', HEALTH_BEAUTY: 'Santé', AUTOMOTIVE: 'Auto', OTHER: 'Autre',
+  TOOLS: 'Outillage', SPORTS_OUTDOORS: 'Sport', BOOKS_MEDIA: 'Livres',
+  HEALTH_BEAUTY: 'Santé', AUTOMOTIVE: 'Auto', TOYS_GAMES: 'Jouets',
+  PETS: 'Animaux', OTHER: 'Autre',
 }
 
 function distanceKm(lat1, lon1, lat2, lon2) {

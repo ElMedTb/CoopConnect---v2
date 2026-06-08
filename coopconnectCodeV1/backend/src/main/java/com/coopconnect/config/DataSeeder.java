@@ -36,7 +36,7 @@ public class DataSeeder implements ApplicationRunner {
         long userCount = userRepository.count();
         long listingCount = listingRepository.count();
 
-        if (userCount >= 20 && listingCount >= 80) {
+        if (userCount >= 20 && listingCount >= 60) {
             log.info("Base déjà seedée ({} utilisateurs, {} annonces). Rien à faire.", userCount, listingCount);
             return;
         }
@@ -120,7 +120,7 @@ public class DataSeeder implements ApplicationRunner {
 
         all.add(listing(users, 3, "Recherche fournisseur régulier tomates fraîches — restaurant Fes",
             "Restaurant gastronomique à Fes cherche fournisseur local de tomates fraîches bio ou conventionnelles. Besoin de 200 à 400 kg par semaine. Contrat annuel possible. Préférence producteurs certifiés. Livraison souhaitée le mardi et vendredi matin.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 0.0, "Fes, Nouvelle Ville", 34.0300, -5.0200, 12, 0));
+            Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 0.0, "Fes, Nouvelle Ville", 34.0300, -5.0200, 12, 0));
 
         all.add(listing(users, 6, "Lot 2 tonnes oranges Maroc calibre A — départ Casablanca",
             "Agrumes de qualité supérieure, région Souss, récolte récente. Lot de 2 tonnes disponible immédiatement. Idéal pour jus de fruits, épiceries, export. Conditionnement en filets 5 kg ou caisses 15 kg. Certificat d'origine disponible.",
@@ -144,7 +144,7 @@ public class DataSeeder implements ApplicationRunner {
 
         all.add(listing(users, 12, "Achat olives brutes — huilerie traditionnelle Fes",
             "Huilerie traditionnelle à Fes cherche apporteurs d'olives brutes pour pressage. Nous achetons minimum 500 kg. Paiement immédiat à la pesée. Trituration possible aussi pour compte tiers.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.SERVICE, Listing.ItemCondition.GOOD, 0.0, "Fes, Médina", 34.0181, -5.0078, 18, 0));
+            Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Fes, Médina", 34.0181, -5.0078, 18, 0));
 
         all.add(listing(users, 4, "Miel de thym Atlas 100% naturel — 200 kg disponibles",
             "Apiculteur de l'Atlas propose miel de thym non pasteurisé, récolte printemps 2025. 200 kg disponibles. Conditionnement en pots 500g, 1kg ou en fûts 20L. Analyse laboratoire fournie. Idéal pour pharmacies, épiceries bio, exportateurs.",
@@ -186,10 +186,6 @@ public class DataSeeder implements ApplicationRunner {
         all.add(listing(users, 11, "Écrans LCD 22 pouces — lot de 20 unités — Casablanca",
             "Société de services informatiques revend 20 écrans LCD 22 pouces (Full HD), marques HP et LG, en bon état de fonctionnement. Câbles VGA/HDMI inclus. Idéal pour bureaux, call centers.",
             Listing.ListingCategory.ELECTRONICS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 18000.0, "Casablanca, Bourgogne", 33.5731, -7.5898, 14, 0));
-
-        all.add(listing(users, 13, "Achat matériel informatique usagé — collecte Casablanca",
-            "Société de recyclage rachète ordinateurs, imprimantes, serveurs, écrans. Déplacement gratuit pour volumes importants (+5 unités). Bon prix garanti. Évaluation sur place.",
-            Listing.ListingCategory.ELECTRONICS, Listing.ListingType.SERVICE, Listing.ItemCondition.FAIR, 0.0, "Casablanca, Sidi Maarouf", 33.5400, -7.6400, 16, 20));
 
         all.add(listing(users, 18, "Imprimantes HP LaserJet reconditionnées — lot 8 unités",
             "Lot de 8 imprimantes HP LaserJet Pro M402n, reconditionnées, avec cartouches neuves. Garantie 6 mois. Idéal TPE, cabinets médicaux, agences. Prix incluant mise en service.",
@@ -236,10 +232,6 @@ public class DataSeeder implements ApplicationRunner {
             "Groupe électrogène diesel 5 kVA, marque Sdmo, 220V/380V, démarrage électrique, compteur horaire 850h. Idéal chantiers, locaux sans alimentation. Bac anti-déversement inclus.",
             Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 14000.0, "Casablanca, Maarif", 33.5898, -7.6031, 8, 20));
 
-        all.add(listing(users, 9, "Location groupe électrogène événementiel — Casablanca",
-            "Société événementielle propose location de groupes électrogènes 3 à 15 kVA pour événements, chantiers temporaires, tournages. Livraison-reprise incluse dans Casablanca. Devis gratuit.",
-            Listing.ListingCategory.TOOLS, Listing.ListingType.SERVICE, Listing.ItemCondition.EXCELLENT, 800.0, "Casablanca, Anfa", 33.5850, -7.6200, 20, 30));
-
         all.add(listing(users, 16, "Matériel de menuiserie aluminium — lot Agadir",
             "Atelier menuiserie aluminium vend : table de coupe, perceuse à colonne, plieuse manuelle, lot de profils aluminium 6m. Convient atelier qui démarre. Prix ensemble.",
             Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.FAIR, 28000.0, "Agadir, Inzegane", 30.3597, -9.5332, 9, 0));
@@ -252,118 +244,7 @@ public class DataSeeder implements ApplicationRunner {
             "Futur café-pâtisserie cherche équipement cuisine : four à convection, pétrin, réfrigérateur, machine à expresso. Occasion acceptée si bon état. Fes ou livraison.",
             Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Fes, Nouvelle Ville", 34.0300, -5.0200, 18, 0));
 
-        // ── 4. Services ───────────────────────────────────────────────────────
-        all.add(listing(users, 10, "Plomberie sanitaire — interventions Casablanca et banlieue",
-            "Artisan plombier qualifié, 15 ans d'expérience. Interventions : dépannage fuite, installation sanitaires, remplacement chauffe-eau, pose robinetterie. Devis gratuit. Disponible 7j/7. Casablanca, Mohammedia, Benslimane.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 300.0, "Casablanca, Bourgogne", 33.5731, -7.5898, 25, 30));
-
-        all.add(listing(users, 0, "Cherche plombier sérieux — appartement Casablanca Maarif",
-            "Propriétaire cherche plombier pour remplacement colonne de douche et réparation fuite sous évier. Disponibilité souhaitée cette semaine. Casablanca Maarif. Facturation obligatoire.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 0.0, "Casablanca, Maarif", 33.5898, -7.6031, 22, 0));
-
-        all.add(listing(users, 1, "Électricité bâtiment — installation et dépannage Rabat",
-            "Électricien agréé ONEE propose : installation électrique neuf, rénovation tableau, pose prises/interrupteurs, dépannage urgence. Devis gratuit sous 24h. Attestation de conformité délivrée.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 450.0, "Rabat, Agdal", 34.0209, -6.8416, 22, 25));
-
-        all.add(listing(users, 7, "Nettoyage industriel et bureaux — société Casablanca",
-            "Société de nettoyage propose : nettoyage bureau, local commercial, fin de chantier, nettoyage vitres en hauteur. Équipe formée, produits écologiques. Contrat mensuel ou ponctuel. Casablanca et périphérie.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 1500.0, "Casablanca, Ain Diab", 33.5600, -7.6700, 30, 20));
-
-        all.add(listing(users, 13, "Besoin nettoyage bureaux hebdomadaire — Casablanca",
-            "PME cherche prestataire nettoyage pour 300m² de bureaux, 2 passages/semaine. Soirée ou week-end préféré. Contrat annuel avec facturation mensuelle. Casablanca Sidi Maarouf.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 0.0, "Casablanca, Sidi Maarouf", 33.5400, -7.6400, 28, 0));
-
-        all.add(listing(users, 18, "Menuiserie bois sur mesure — Rabat et région",
-            "Menuisier ébéniste propose fabrication sur mesure : cuisine équipée, dressing, bibliothèque, parquet, moulures. Bois massif et dérivés. Devis 48h. Pose incluse.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 5000.0, "Rabat, Souissi", 34.0100, -6.8200, 18, 40));
-
-        all.add(listing(users, 4, "Traduction et interprétariat — arabe/français/espagnol",
-            "Traducteur assermenté propose : traduction documents officiels, interprétariat conférences, localisation contenus web. Langues : arabe, français, espagnol. Délais rapides. Certifié.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SKILL, Listing.ItemCondition.NEW, 200.0, "Tanger, Iberia", 35.7595, -5.8340, 16, 60));
-
-        all.add(listing(users, 16, "Comptabilité et fiscalité TPE/PME — Agadir",
-            "Expert-comptable propose services comptabilité : tenue livres, déclarations TVA/IR/IS, bilan annuel, conseil fiscal. Tarifs adaptés TPE et artisans. Premier rendez-vous gratuit.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 1200.0, "Agadir, Inzegane", 30.3597, -9.5332, 20, 50));
-
-        all.add(listing(users, 12, "Conseil juridique entreprises — Marrakech",
-            "Juriste d'entreprise propose consultations : droit des affaires, contrats commerciaux, droit du travail, création société. Confidentialité garantie. Rendez-vous au cabinet ou en visio.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 500.0, "Marrakech, Guéliz", 31.6295, -7.9811, 14, 60));
-
-        all.add(listing(users, 9, "Design graphique et identité visuelle — Casablanca",
-            "Studio de design propose : logo, charte graphique, supports print (brochures, flyers, cartes), design packaging. 8 ans d'expérience. Portfolio sur demande. Devis en 24h.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 3000.0, "Casablanca, Anfa", 33.5850, -7.6200, 26, 0));
-
-        all.add(listing(users, 2, "Recherche prestataire design packaging — Marrakech",
-            "Entreprise agroalimentaire cherche designer packaging pour gamme de produits terroir (6 références). Design moderne valorisant l'artisanat marocain. Budget : 8000-15000 MAD.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 0.0, "Marrakech, Guéliz", 31.6295, -7.9811, 22, 0));
-
-        all.add(listing(users, 11, "Développement web et applications mobiles — Casablanca",
-            "Agence digitale propose : sites web vitrine et e-commerce, applications mobiles iOS/Android, maintenance. Technologies : React, Spring Boot, Flutter. Projets livrés clés en main.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 15000.0, "Casablanca, Bourgogne", 33.5731, -7.5898, 32, 0));
-
-        all.add(listing(users, 8, "Photographie professionnelle — événements et produits",
-            "Photographe professionnel propose : photos produits sur fond blanc, reportage événementiel (mariages, séminaires), photos architecture intérieure. Retouche incluse. Meknès et déplacement.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 1500.0, "Meknes, Hamria", 33.8935, -5.5547, 19, 0));
-
-        // ── 5. Transport & Logistique ─────────────────────────────────────────
-        all.add(listing(users, 6, "Transport frigorifique Casablanca-Marrakech — régulier",
-            "Camion frigorifique 10 tonnes propose tournée hebdomadaire Casablanca-Marrakech (lundi et jeudi). Température réglable 0°C à +10°C. Idéal produits frais, pharmaceutiques. Affrètement partiel possible.",
-            Listing.ListingCategory.TRANSPORTATION, Listing.ListingType.TRANSPORT, Listing.ItemCondition.EXCELLENT, 2500.0, "Casablanca, Ain Diab", 33.5600, -7.6700, 24, 100));
-
-        all.add(listing(users, 2, "Besoin transport réfrigéré — produits laitiers Marrakech",
-            "Laiterie artisanale cherche transporteur réfrigéré pour approvisionnement Casablanca 2x/semaine. Charge : 500-800 kg. Contrat mensuel souhaité. Température entre 2°C et 6°C obligatoire.",
-            Listing.ListingCategory.TRANSPORTATION, Listing.ListingType.TRANSPORT, Listing.ItemCondition.NEW, 0.0, "Marrakech, Guéliz", 31.6295, -7.9811, 35, 0));
-
-        all.add(listing(users, 13, "Camionnette 3,5 tonnes — livraisons Casablanca",
-            "Artisan propose service de livraison avec camionnette 3,5 tonnes (caisse fermée) dans Casablanca et région. Déménagement, livraison meuble, matériaux chantier. Tarif à la course ou journée.",
-            Listing.ListingCategory.TRANSPORTATION, Listing.ListingType.TRANSPORT, Listing.ItemCondition.GOOD, 500.0, "Casablanca, Sidi Maarouf", 33.5400, -7.6400, 18, 30));
-
-        all.add(listing(users, 4, "Transport marchandises Tanger-Rabat-Casablanca",
-            "Transporteur propose trajets réguliers Tanger → Rabat → Casablanca, 3 fois/semaine. Camion 20 tonnes avec hayon. Affrètement complet ou partiel (palette). Traçabilité GPS.",
-            Listing.ListingCategory.TRANSPORTATION, Listing.ListingType.TRANSPORT, Listing.ItemCondition.EXCELLENT, 3500.0, "Tanger, Iberia", 35.7595, -5.8340, 22, 120));
-
-        all.add(listing(users, 15, "Cherche transport occasion — Oujda vers Fes",
-            "Artisan recherche transport de marchandises (céramiques) d'Oujda vers Fes, environ 500 kg, fragile. Transport soigneux indispensable. Ponctuel souhaité. Contact direct transporteur.",
-            Listing.ListingCategory.TRANSPORTATION, Listing.ListingType.TRANSPORT, Listing.ItemCondition.NEW, 0.0, "Oujda, Centre", 34.6805, -1.9076, 14, 0));
-
-        all.add(listing(users, 17, "Véhicule de livraison last-mile — Agadir",
-            "Société logistique propose livraisons last-mile Agadir et région : vélos cargo, motos, petites camionnettes électriques. Idéal e-commerce local, restaurants, pharmacies.",
-            Listing.ListingCategory.TRANSPORTATION, Listing.ListingType.TRANSPORT, Listing.ItemCondition.EXCELLENT, 80.0, "Agadir, Inzegane", 30.3597, -9.5332, 28, 15));
-
-        // ── 6. Formation & Compétences ────────────────────────────────────────
-        all.add(listing(users, 1, "Formation en gestion comptable TPE — Rabat",
-            "Formatrice certifiée propose formation pratique : comptabilité générale, tenue de livres, logiciel Sage, déclarations fiscales. Sessions de 2 jours, groupe de 8 max. Attestation délivrée.",
-            Listing.ListingCategory.SKILLS_EDUCATION, Listing.ListingType.SKILL, Listing.ItemCondition.NEW, 2500.0, "Rabat, Agdal", 34.0209, -6.8416, 30, 0));
-
-        all.add(listing(users, 19, "Cherche formation comptabilité — auto-entrepreneur Tanger",
-            "Auto-entrepreneur cherche formation comptabilité de base pour gérer ses finances. Préférence formation courte (2-3 jours) avec exercices pratiques. Budget max 2000 MAD.",
-            Listing.ListingCategory.SKILLS_EDUCATION, Listing.ListingType.SKILL, Listing.ItemCondition.NEW, 0.0, "Tanger, Malabata", 35.7700, -5.8100, 8, 0));
-
-        all.add(listing(users, 11, "Cours de programmation Python et data science — Casablanca",
-            "Ingénieur en IA propose cours particuliers et formation groupe : Python (débutant à avancé), pandas, scikit-learn, machine learning. En présentiel Casablanca ou en ligne. Projets pratiques inclus.",
-            Listing.ListingCategory.SKILLS_EDUCATION, Listing.ListingType.SKILL, Listing.ItemCondition.NEW, 300.0, "Casablanca, Bourgogne", 33.5731, -7.5898, 22, 0));
-
-        all.add(listing(users, 14, "Formation langue française — tous niveaux Oujda",
-            "Professeur certifié FLE propose cours de français : expression orale, écrite, préparation DELF/DALF. Débutants bienvenus. Groupe ou particulier. Sessions matin ou soir.",
-            Listing.ListingCategory.SKILLS_EDUCATION, Listing.ListingType.SKILL, Listing.ItemCondition.NEW, 200.0, "Oujda, Centre", 34.6805, -1.9076, 16, 0));
-
-        all.add(listing(users, 7, "Cours arabe classique et dialectal — Casablanca",
-            "Enseignant qualifié propose cours d'arabe : langue coranique, arabe classique, darija marocaine pour étrangers. Méthode communicative. Débutants ou remise à niveau. Matériels pédagogiques fournis.",
-            Listing.ListingCategory.SKILLS_EDUCATION, Listing.ListingType.SKILL, Listing.ItemCondition.NEW, 180.0, "Casablanca, Ain Diab", 33.5600, -7.6700, 24, 0));
-
-        all.add(listing(users, 5, "Formation cuisine marocaine traditionnelle — Agadir",
-            "Chef cuisinière propose ateliers cuisine marocaine : tajines, couscous, pastilla, pâtisseries orientales. Groupes de 4 à 10 personnes. Idéal expatriés, touristes, passionnés de gastronomie.",
-            Listing.ListingCategory.SKILLS_EDUCATION, Listing.ListingType.SKILL, Listing.ItemCondition.NEW, 350.0, "Agadir, Talborjt", 30.4278, -9.5981, 26, 0));
-
-        all.add(listing(users, 9, "Coaching entrepreneuriat — création et développement d'entreprise",
-            "Coach certifié accompagne créateurs d'entreprise et dirigeants TPE : business plan, stratégie marketing, financements, développement commercial. Sessions individuelles ou ateliers collectifs. Casablanca.",
-            Listing.ListingCategory.SKILLS_EDUCATION, Listing.ListingType.SKILL, Listing.ItemCondition.NEW, 500.0, "Casablanca, Anfa", 33.5850, -7.6200, 28, 0));
-
-        all.add(listing(users, 17, "Formation photovoltaïque et énergies renouvelables",
-            "Technicien certifié propose formation installation panneaux solaires, onduleurs, maintenance. Théorie et pratique sur installation réelle. Certificat délivré. Agadir et région.",
-            Listing.ListingCategory.SKILLS_EDUCATION, Listing.ListingType.SKILL, Listing.ItemCondition.NEW, 3000.0, "Agadir, Inzegane", 30.3597, -9.5332, 18, 0));
-
-        // ── 7. Maison & Décoration ────────────────────────────────────────────
+        // ── 4. Maison & Décoration ────────────────────────────────────────────
         all.add(listing(users, 12, "Mobilier salon marocain traditionnel — Marrakech",
             "Artisan propose salon marocain complet : canapés en L, coussins brodés, table basse laquée, luminaire en cuivre. Bois de cèdre. Fabrication sur mesure ou modèles expo disponibles à vendre.",
             Listing.ListingCategory.HOME_GARDEN, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 18000.0, "Marrakech, Médina", 31.6340, -7.9890, 20, 40));
@@ -401,15 +282,7 @@ public class DataSeeder implements ApplicationRunner {
             "Importateur propose déstockage vêtements enfants toutes saisons : T-shirts, pantalons, robes, pyjamas. Marques no-name et quelques marques françaises. Lot de 2000 à 5000 pièces.",
             Listing.ListingCategory.CLOTHING, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 50000.0, "Casablanca, Ain Diab", 33.5600, -7.6700, 14, 0));
 
-        all.add(listing(users, 18, "Uniformes professionnels sur mesure — entreprises Rabat",
-            "Confectionneur propose uniformes et vêtements de travail : blouses, combinaisons, polos brodés, gilets. Personnalisation logo incluse. Minimum 20 pièces par commande. Livraison 10 jours.",
-            Listing.ListingCategory.CLOTHING, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 250.0, "Rabat, Souissi", 34.0100, -6.8200, 22, 0));
-
-        all.add(listing(users, 9, "Cherche fournisseur uniformes pour hôtel — Casablanca",
-            "Hôtel 4 étoiles cherche fournisseur uniformes : tenues réception, ménage, restauration. 80 à 150 pièces. Tissu résistant lavages fréquents. Délai livraison 3 semaines max.",
-            Listing.ListingCategory.CLOTHING, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 0.0, "Casablanca, Anfa", 33.5850, -7.6200, 40, 0));
-
-        // ── 9. Santé & Bien-être ──────────────────────────────────────────────
+        // ── 6. Santé & Bien-être ──────────────────────────────────────────────
         all.add(listing(users, 1, "Équipement médical occasion — cabinet Rabat",
             "Cabinet médical renouvelle équipement et propose : ECG Cardioline, tensiomètre numérique Withings, oxymètre, balance médicale. Tout étalonné et avec certificat de conformité.",
             Listing.ListingCategory.HEALTH_BEAUTY, Listing.ListingType.ITEM, Listing.ItemCondition.EXCELLENT, 22000.0, "Rabat, Agdal", 34.0209, -6.8416, 14, 0));
@@ -422,28 +295,7 @@ public class DataSeeder implements ApplicationRunner {
             "Producteur propose gamme plantes médicinales séchées : romarin, thym, lavande, camomille, rose de Damas. Conditionnement professionnel, analyse sanitaire fournie. Idéal herboristeries, pharmacies, export.",
             Listing.ListingCategory.HEALTH_BEAUTY, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 180.0, "Agadir, Inzegane", 30.3597, -9.5332, 16, 15));
 
-        // ── 10. Espaces & Immobilier ──────────────────────────────────────────
-        all.add(listing(users, 10, "Local commercial à partager — Casablanca Centre",
-            "Entrepreneur propose sous-location d'une partie de local commercial 200m² (100m² disponibles) dans quartier animé Casablanca. Idéal showroom, atelier artisan, boutique pop-up. Loyer flexible.",
-            Listing.ListingCategory.REAL_ESTATE, Listing.ListingType.SPACE, Listing.ItemCondition.EXCELLENT, 5000.0, "Casablanca, Bourgogne", 33.5731, -7.5898, 16, 50));
-
-        all.add(listing(users, 19, "Cherche atelier pour couturière — Tanger",
-            "Couturière cherche espace atelier 30 à 50m², rez-de-chaussée, lumière naturelle, dans Tanger ou banlieue proche. Partage avec d'autres artisans possible. Budget max 3000 MAD/mois.",
-            Listing.ListingCategory.REAL_ESTATE, Listing.ListingType.SPACE, Listing.ItemCondition.GOOD, 0.0, "Tanger, Malabata", 35.7700, -5.8100, 8, 0));
-
-        all.add(listing(users, 2, "Entrepôt frigorifique à louer — Marrakech zone industrielle",
-            "Propriétaire propose entrepôt frigorifique 500m³, température 0°C à -20°C modulable. Quai de chargement, accès 24h/24. Idéal stockage produits frais, pharmaceutiques, agroalimentaire.",
-            Listing.ListingCategory.REAL_ESTATE, Listing.ListingType.SPACE, Listing.ItemCondition.EXCELLENT, 8000.0, "Marrakech, Zone Industrielle", 31.6000, -8.0000, 20, 200));
-
-        all.add(listing(users, 6, "Espace coworking disponible — Casablanca Sidi Maarouf",
-            "Centre d'affaires propose postes de coworking (fixes et flexibles), salles de réunion (4 à 20 personnes), bureaux privatifs. WiFi fibre, café inclus. Domiciliation possible.",
-            Listing.ListingCategory.REAL_ESTATE, Listing.ListingType.SPACE, Listing.ItemCondition.EXCELLENT, 1500.0, "Casablanca, Sidi Maarouf", 33.5400, -7.6400, 35, 100));
-
-        all.add(listing(users, 13, "Besoin espace stockage — stocks saisonniers Casablanca",
-            "TPE cherche espace de stockage 100 à 200m² pour produits non-alimentaires, sécurisé, accès journalier. Quartier Casablanca ou périphérie. Contrat 3 à 6 mois.",
-            Listing.ListingCategory.REAL_ESTATE, Listing.ListingType.SPACE, Listing.ItemCondition.GOOD, 0.0, "Casablanca, Hay Hassani", 33.5300, -7.6600, 25, 0));
-
-        // ── 11. Automobile & Véhicules ────────────────────────────────────────
+        // ── 7. Automobile & Véhicules ────────────────────────────────────────
         all.add(listing(users, 8, "Pièces détachées Renault Dacia — lot important Meknès",
             "Garagiste propose lot de pièces détachées originales et après-marché : Renault Logan, Dacia Sandero, Clio III. Filtres, plaquettes, amortisseurs, alternateurs. Garantie 3 mois.",
             Listing.ListingCategory.AUTOMOTIVE, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 35000.0, "Meknes, Hamria", 33.8935, -5.5547, 22, 0));
@@ -491,10 +343,6 @@ public class DataSeeder implements ApplicationRunner {
             "Installateur propose lot de 20 panneaux solaires monocristallins 400W (marque JA Solar), déréférencés mais neufs. Avec micro-onduleurs Enphase. Idéal projet résidentiel ou PME.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 48000.0, "Agadir, Inzegane", 30.3597, -9.5332, 18, 0));
 
-        all.add(listing(users, 5, "Besoin installation solaire — bâtiment associatif Agadir",
-            "Association cherche installateur qualifié pour système solaire 6 kWc pour alimenter local associatif (bureaux, salles de formation). Devis et financement participatif envisagé.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 0.0, "Agadir, Talborjt", 30.4278, -9.5981, 20, 0));
-
         all.add(listing(users, 10, "Chauffe-eau solaire occasion — 300L Casablanca",
             "Particulier revend chauffe-eau solaire thermique 300L (2 capteurs plans), 5 ans de fonctionnement, bon état. Ballon et capteurs inclus. Démontage par acheteur ou en option.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 5500.0, "Casablanca, Bourgogne", 33.5731, -7.5898, 10, 20));
@@ -531,14 +379,6 @@ public class DataSeeder implements ApplicationRunner {
             Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Casablanca, Sidi Maarouf", 33.5400, -7.6400, 12, 0));
 
         // ── 18. Récupération & Recyclage ──────────────────────────────────────
-        all.add(listing(users, 9, "Collecte déchets électroniques — Casablanca et région",
-            "Société de recyclage agréée propose collecte gratuite de DEEE : ordinateurs, téléphones, imprimantes, câbles. Certificat de destruction fourni. Idéal entreprises pour conformité RSE.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 0.0, "Casablanca, Anfa", 33.5850, -7.6200, 24, 50));
-
-        all.add(listing(users, 16, "Achat ferraille et métaux usagés — Agadir",
-            "Ferrailleur agréé rachète : fer, acier, aluminium, cuivre, câbles. Pesée sur place avec balance certifiée. Paiement immédiat. Déplacement gratuit au-delà de 500 kg.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.SERVICE, Listing.ItemCondition.FAIR, 0.0, "Agadir, Inzegane", 30.3597, -9.5332, 18, 30));
-
         all.add(listing(users, 0, "Surplus palettes bois — lot 200 palettes Casablanca",
             "Entrepôt logistique cède surplus palettes bois EUR 80x120, en bon état, clouées. 200 palettes disponibles immédiatement. Idéal artisans, jardinerie, déco. Ramassage sur place.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 6000.0, "Casablanca, Hay Mohammadi", 33.5500, -7.5600, 8, 0));
@@ -560,20 +400,7 @@ public class DataSeeder implements ApplicationRunner {
             "Pâtisserie artisanale cherche fournisseur de sucre en poudre et glace, minimum 200 kg/mois. Contrat mensuel possible. Livraison à Tanger.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 0.0, "Tanger, Iberia", 35.7595, -5.8340, 14, 0));
 
-        // ── 20. Médias numériques & Marketing ────────────────────────────────
-        all.add(listing(users, 9, "Gestion réseaux sociaux et marketing digital",
-            "Agence propose gestion complète réseaux sociaux (Facebook, Instagram, TikTok), création contenu, publicité sponsorisée, reporting mensuel. Tarifs PME. Premiers résultats garantis sous 60 jours.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 3000.0, "Casablanca, Anfa", 33.5850, -7.6200, 28, 0));
-
-        all.add(listing(users, 8, "Tournage et montage vidéo — Meknès et région",
-            "Réalisateur freelance propose tournage et montage vidéo : film institutionnel, spot publicitaire, documentation produit, mariage. Drone disponible. Livraison formats web et diffusion.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 4000.0, "Meknes, Hamria", 33.8935, -5.5547, 18, 0));
-
-        all.add(listing(users, 19, "Référencement SEO et création site e-commerce",
-            "Expert digital propose : audit SEO, optimisation on-page, création backlinks, création boutique Shopify ou WooCommerce clé en main. Reporting mensuel inclus. Résultats garantis.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 5000.0, "Tanger, Malabata", 35.7700, -5.8100, 22, 0));
-
-        // ── 21. Santé animale & Élevage ───────────────────────────────────────
+        // ── 16. Santé animale & Élevage ───────────────────────────────────────
         all.add(listing(users, 15, "Surplus aliments bétail — son de blé 5 tonnes",
             "Moulin propose surplus son de blé, 5 tonnes disponibles. Idéal éleveurs bovins, ovins, volailles. Conditionnement sacs 40 kg. Départ Oujda, livraison région possible.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.EXCELLENT, 7500.0, "Oujda, Centre", 34.6805, -1.9076, 12, 25));
@@ -591,15 +418,7 @@ public class DataSeeder implements ApplicationRunner {
             "Particulier cherche parpaings, ciment, carrelage et fer à béton pour petite construction (60m²). Occasion ou surplus chantier accepté. Région Oujda-Nador.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Oujda, Centre", 34.6805, -1.9076, 8, 0));
 
-        all.add(listing(users, 18, "Échafaudages en location — Rabat",
-            "Société de BTP propose location échafaudages tubulaires 1000m² montage/démontage inclus. Idéal ravalement, peinture façade, toiture. Rabat et région. Devis en 24h.",
-            Listing.ListingCategory.TOOLS, Listing.ListingType.SERVICE, Listing.ItemCondition.EXCELLENT, 2000.0, "Rabat, Souissi", 34.0100, -6.8200, 20, 30));
-
-        all.add(listing(users, 0, "Peinture intérieure professionnelle — Casablanca",
-            "Équipe de peintres professionnels propose peinture intérieure/extérieure, enduit, faux plafond. Matériaux inclus ou fournis par le client. Devis gratuit. Chantiers Casablanca et banlieue.",
-            Listing.ListingCategory.SERVICES, Listing.ListingType.SERVICE, Listing.ItemCondition.NEW, 800.0, "Casablanca, Maarif", 33.5898, -7.6031, 24, 20));
-
-        // ── 23. Sport & Loisirs ───────────────────────────────────────────────
+        // ── 15. Sport & Loisirs ───────────────────────────────────────────────
         all.add(listing(users, 1, "Équipement salle de sport — lot complet occasion",
             "Salle de sport en restructuration cède : 5 tapis roulants Technogym, 10 vélos elliptiques, rack haltères 5-50kg, bancs de musculation. Tout en état de fonctionnement.",
             Listing.ListingCategory.SPORTS_OUTDOORS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 120000.0, "Rabat, Agdal", 34.0209, -6.8416, 18, 0));

@@ -10,20 +10,12 @@ const CATEGORIES = [
   { value: 'CLOTHING', label: 'Vêtements' },
   { value: 'HOME_GARDEN', label: 'Maison & Jardin' },
   { value: 'TOOLS', label: 'Outillage' },
-  { value: 'SERVICES', label: 'Services' },
-  { value: 'SKILLS_EDUCATION', label: 'Compétences' },
   { value: 'SPORTS_OUTDOORS', label: 'Sport' },
   { value: 'BOOKS_MEDIA', label: 'Livres & Médias' },
+  { value: 'HEALTH_BEAUTY', label: 'Santé & Beauté' },
+  { value: 'AUTOMOTIVE', label: 'Auto & Véhicules' },
+  { value: 'TOYS_GAMES', label: 'Jouets & Jeux' },
   { value: 'OTHER', label: 'Autre' },
-]
-
-const TYPES = [
-  { value: '', label: 'Tout type' },
-  { value: 'ITEM', label: 'Objet' },
-  { value: 'SERVICE', label: 'Service' },
-  { value: 'SKILL', label: 'Compétence' },
-  { value: 'SPACE', label: 'Espace' },
-  { value: 'TRANSPORT', label: 'Transport' },
 ]
 
 export default function Browse() {

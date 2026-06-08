@@ -6,8 +6,9 @@ import { Sparkles, RefreshCw, Package, Plus, ChevronDown } from 'lucide-react'
 
 const CATEGORY_LABELS = {
   ELECTRONICS: 'Électronique', CLOTHING: 'Vêtements', HOME_GARDEN: 'Maison & Jardin',
-  TOOLS: 'Outillage', SERVICES: 'Services', SKILLS_EDUCATION: 'Compétences',
-  SPORTS_OUTDOORS: 'Sport', BOOKS_MEDIA: 'Livres', OTHER: 'Autre',
+  TOOLS: 'Outillage', SPORTS_OUTDOORS: 'Sport', BOOKS_MEDIA: 'Livres',
+  HEALTH_BEAUTY: 'Santé & Beauté', AUTOMOTIVE: 'Auto & Véhicules',
+  TOYS_GAMES: 'Jouets & Jeux', PETS: 'Animaux', OTHER: 'Autre',
 }
 
 export default function Matches() {
