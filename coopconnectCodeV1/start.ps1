@@ -1,7 +1,7 @@
 ﻿$ROOT = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Write-Host "================================================" -ForegroundColor Green
-Write-Host "  CoopConnect AI - Demarrage des services" -ForegroundColor Green
+Write-Host "  CoopConnect - Demarrage des services" -ForegroundColor Green
 Write-Host "================================================"
 Write-Host ""
 

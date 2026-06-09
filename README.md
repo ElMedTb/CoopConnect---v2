@@ -181,5 +181,4 @@ Voir [`coopconnectCodeV1/README.md`](coopconnectCodeV1/README.md) pour l'archite
 - Section fonctionnalités remplacée par une démo produit interactive (maquettes d'annonce + résultats de matching)
 
 ### Matching / Recommandations
-- Texte "Utilisateur fiable" et scores de confiance filtrés côté frontend dans les explications des correspondances *(note : à supprimer côté matching-service dans le prompt Gemini pour une solution définitive)*
-- Distance + adresse de localisation affichées ensemble dans les cartes de correspondance (si le service retourne `locationText` dans la réponse)
+- Distance + adresse de localisation affichées ensemble dans les cartes de correspondance

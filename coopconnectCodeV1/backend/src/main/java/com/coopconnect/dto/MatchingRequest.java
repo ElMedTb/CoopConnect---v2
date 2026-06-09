@@ -43,6 +43,7 @@ public class MatchingRequest {
         private List<String> tags;
         private Double latitude;
         private Double longitude;
+        private String city;
 
         @JsonProperty("owner_trust_score")
         private Double ownerTrustScore;

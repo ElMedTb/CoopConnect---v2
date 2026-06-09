@@ -142,6 +142,13 @@ public class MatchingService {
                 ? Arrays.asList(l.getAiMatchingTags().split(","))
                 : Collections.emptyList();
 
+        String city = null;
+        if (l.getLocationText() != null && l.getLocationText().contains(",")) {
+            city = l.getLocationText().split(",")[0].trim();
+        } else if (l.getLocationText() != null) {
+            city = l.getLocationText().trim();
+        }
+
         return MatchingRequest.ListingDto.builder()
                 .id(l.getId().toString())
                 .title(l.getTitle())
@@ -149,9 +156,11 @@ public class MatchingService {
                 .category(l.getCategory() != null ? l.getCategory().name() : null)
                 .subcategory(l.getSubcategory() != null ? l.getSubcategory().name() : null)
                 .listingType(l.getType() != null ? l.getType().name() : null)
+                .exchangeIntent(l.getExchangeIntent() != null ? l.getExchangeIntent().name() : null)
                 .tags(tags)
                 .latitude(l.getLatitude())
                 .longitude(l.getLongitude())
+                .city(city)
                 .ownerTrustScore(l.getOwner() != null ? l.getOwner().getTrustScore() : 3.0)
                 .estimatedValue(l.getEstimatedValue())
                 .build();

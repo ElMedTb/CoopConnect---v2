@@ -118,33 +118,17 @@ public class DataSeeder implements ApplicationRunner {
             "Producteur local propose surplus de 600 kg de tomates biologiques certifiées, calibre A, parfait état. Disponibles immédiatement. Convient restauration, épiceries, marchés. Livraison possible dans un rayon de 30 km autour de Casablanca. Conditionnement en caisses de 10 kg. Prix préférentiel pour achat en gros.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 3500.0, "Casablanca, Hay Mohammadi", 33.5500, -7.5600, 5, 30));
 
-        all.add(listing(users, 3, "Recherche fournisseur régulier tomates fraîches — restaurant Fes",
-            "Restaurant gastronomique à Fes cherche fournisseur local de tomates fraîches bio ou conventionnelles. Besoin de 200 à 400 kg par semaine. Contrat annuel possible. Préférence producteurs certifiés. Livraison souhaitée le mardi et vendredi matin.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 0.0, "Fes, Nouvelle Ville", 34.0300, -5.0200, 12, 0));
-
         all.add(listing(users, 6, "Lot 2 tonnes oranges Maroc calibre A — départ Casablanca",
             "Agrumes de qualité supérieure, région Souss, récolte récente. Lot de 2 tonnes disponible immédiatement. Idéal pour jus de fruits, épiceries, export. Conditionnement en filets 5 kg ou caisses 15 kg. Certificat d'origine disponible.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 8000.0, "Casablanca, Port", 33.6100, -7.5800, 3, 15));
-
-        all.add(listing(users, 2, "Besoin urgent oranges et agrumes — épicerie Marrakech",
-            "Épicerie bien établie à Marrakech Guéliz cherche fournisseur direct d'oranges Maroc. Quantité : 500 à 800 kg hebdomadaire. Paiement comptant. Contact direct avec producteur ou grossiste. Éviter intermédiaires.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 0.0, "Marrakech, Guéliz", 31.6295, -7.9811, 8, 0));
 
         all.add(listing(users, 16, "Huile d'argan artisanale 100% pure — coopérative Agadir",
             "Coopérative féminine propose huile d'argan cosmétique et alimentaire, pressée à froid, certifiée biologique. Conditionnement 100 ml, 250 ml, 500 ml et en vrac (5L). Idéal pour revendeurs, spas, exportateurs. Étiquetage personnalisé possible.",
             Listing.ListingCategory.HEALTH_BEAUTY, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 450.0, "Agadir, Inzegane", 30.3597, -9.5332, 22, 50));
 
-        all.add(listing(users, 5, "Recherche huile d'argan en vrac — distributeur Agadir",
-            "Entreprise de distribution cosmétiques cherche fournisseur d'huile d'argan pure, minimum 50L par commande. Certification bio exigée. Partenariat long terme envisagé. Fourniture d'analyses en laboratoire requise.",
-            Listing.ListingCategory.HEALTH_BEAUTY, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 0.0, "Agadir, Talborjt", 30.4278, -9.5981, 15, 0));
-
         all.add(listing(users, 8, "Surplus olives Picholine 800 kg — départ Meknès",
             "Domaine agricole propose surplus de récolte : 800 kg d'olives Picholine, calibre moyen-grand, propres à la consommation ou à la trituration. Idéal pour huileries artisanales ou conserveries. Prix départ champ.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.EXCELLENT, 4000.0, "Meknes, Plaine", 33.8700, -5.5300, 6, 20));
-
-        all.add(listing(users, 12, "Achat olives brutes — huilerie traditionnelle Fes",
-            "Huilerie traditionnelle à Fes cherche apporteurs d'olives brutes pour pressage. Nous achetons minimum 500 kg. Paiement immédiat à la pesée. Trituration possible aussi pour compte tiers.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Fes, Médina", 34.0181, -5.0078, 18, 0));
 
         all.add(listing(users, 4, "Miel de thym Atlas 100% naturel — 200 kg disponibles",
             "Apiculteur de l'Atlas propose miel de thym non pasteurisé, récolte printemps 2025. 200 kg disponibles. Conditionnement en pots 500g, 1kg ou en fûts 20L. Analyse laboratoire fournie. Idéal pour pharmacies, épiceries bio, exportateurs.",
@@ -162,10 +146,6 @@ public class DataSeeder implements ApplicationRunner {
             "Exploitation agricole dispose de surplus de menthe nana séchée, conditionnée en sachets 500g. Idéal pour le marché du thé, herboristeries, export. Contact direct producteur.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.EXCELLENT, 2200.0, "Kenitra, Médina", 34.2610, -6.5802, 11, 20));
 
-        all.add(listing(users, 18, "Recherche matières premières alimentaires locales — Casablanca",
-            "Entreprise agroalimentaire cherche fournisseurs locaux : tomates, oignons, pommes de terre, carottes. Volumes : 1 à 5 tonnes/semaine selon légume. Contrat cadre possible. Producteurs et coopératives privilégiés.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 0.0, "Casablanca, Hay Hassani", 33.5300, -7.6600, 25, 0));
-
         all.add(listing(users, 1, "Lot figues séchées artisanales — 400 kg Rabat",
             "Coopérative propose figues séchées naturellement, sans additifs. Production du Rif. 400 kg disponibles en sacs 10 kg ou 25 kg. Certifiées agriculture raisonnée.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 12000.0, "Rabat, Agdal", 34.0209, -6.8416, 8, 25));
@@ -174,10 +154,6 @@ public class DataSeeder implements ApplicationRunner {
         all.add(listing(users, 10, "Lot 30 ordinateurs reconditionnés HP/Dell — Casablanca",
             "Entreprise IT cède lot de 30 ordinateurs de bureau reconditionnés : HP EliteDesk et Dell OptiPlex, processeur Core i5/i7, RAM 8 Go, SSD 256 Go, Windows 11 Pro. Testés et garantis 3 mois. Idéal pour entreprises, écoles, associations. Facture disponible.",
             Listing.ListingCategory.ELECTRONICS, Listing.ListingType.ITEM, Listing.ItemCondition.LIKE_NEW, 45000.0, "Casablanca, Bourgogne", 33.5731, -7.5898, 18, 0));
-
-        all.add(listing(users, 7, "Besoin ordinateurs pour association jeunesse — Casablanca",
-            "Association culturelle cherche ordinateurs reconditionnés pour salle informatique (15 postes minimum). Budget limité, condition bon état acceptable. Don ou vente à prix solidaire préféré. Reçu fiscal possible.",
-            Listing.ListingCategory.ELECTRONICS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Casablanca, Ain Diab", 33.5600, -7.6700, 20, 0));
 
         all.add(listing(users, 4, "Smartphones Samsung Galaxy A série — lot 15 unités Tanger",
             "Commerçant cède lot de 15 smartphones Samsung Galaxy A32/A52, déverrouillés, état excellent à bon état, avec boîtes d'origine. Idéal revendeurs. Vente par lot uniquement.",
@@ -212,10 +188,6 @@ public class DataSeeder implements ApplicationRunner {
             "Machine à coudre industrielle Singer 4452 robuste, 1100 coups/minute, excellent état, entretenue régulièrement. Idéal atelier couture, confection, maroquinerie. Démo sur place possible.",
             Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.EXCELLENT, 8500.0, "Meknes, Hamria", 33.8935, -5.5547, 7, 15));
 
-        all.add(listing(users, 17, "Cherche machines à coudre pour coopérative couture",
-            "Coopérative artisanale de couture cherche 3 à 5 machines industrielles ou semi-industrielles. Budget : 3000 à 8000 MAD par machine. Marque : peu importe si bon état. Région Agadir.",
-            Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Agadir, Inzegane", 30.3597, -9.5332, 14, 0));
-
         all.add(listing(users, 12, "Compresseur d'air 200L — atelier Marrakech",
             "Compresseur d'air professionnel 200L, 3HP, pression maxi 10 bars. Marque Lacme. Entretenu, révisé il y a 6 mois. Vendu avec tuyau spiral 10m et pistolet de gonflage.",
             Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 5500.0, "Marrakech, Médina", 31.6340, -7.9890, 6, 10));
@@ -223,10 +195,6 @@ public class DataSeeder implements ApplicationRunner {
         all.add(listing(users, 2, "Outillage électroportatif professionnel — lot Marrakech",
             "Liquidation atelier : perçeuse Bosch GSB 20-2, visseuse DeWalt DCD771, scie sauteuse Makita, ponceuse orbitale. Tout fonctionnel avec leurs coffrets. Idéal artisan débutant ou complément d'atelier.",
             Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 9200.0, "Marrakech, Guéliz", 31.6295, -7.9811, 11, 0));
-
-        all.add(listing(users, 14, "Cherche outillage électroportatif — artisan plombier",
-            "Artisan plombier cherche perceuse à percussion et meuleuse d'angle en bon état. Budget max 2500 MAD les deux. Région Oujda. Pas d'intermédiaires SVP.",
-            Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Oujda, Centre", 34.6805, -1.9076, 12, 0));
 
         all.add(listing(users, 0, "Groupe électrogène 5 kVA diesel — Casablanca",
             "Groupe électrogène diesel 5 kVA, marque Sdmo, 220V/380V, démarrage électrique, compteur horaire 850h. Idéal chantiers, locaux sans alimentation. Bac anti-déversement inclus.",
@@ -239,10 +207,6 @@ public class DataSeeder implements ApplicationRunner {
         all.add(listing(users, 5, "Équipement cuisine professionnelle — restaurant Agadir",
             "Restaurant en fermeture cède équipement complet : piano de cuisson 6 feux, friteuse 20L, hotte aspirante inox 2m, réfrigérateur pro 700L, étagères inox. Tout en état de marche.",
             Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 55000.0, "Agadir, Talborjt", 30.4278, -9.5981, 15, 10));
-
-        all.add(listing(users, 3, "Recherche équipement cuisine pro — café pâtisserie Fes",
-            "Futur café-pâtisserie cherche équipement cuisine : four à convection, pétrin, réfrigérateur, machine à expresso. Occasion acceptée si bon état. Fes ou livraison.",
-            Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Fes, Nouvelle Ville", 34.0300, -5.0200, 18, 0));
 
         // ── 4. Maison & Décoration ────────────────────────────────────────────
         all.add(listing(users, 12, "Mobilier salon marocain traditionnel — Marrakech",
@@ -261,10 +225,6 @@ public class DataSeeder implements ApplicationRunner {
             "Entreprise en déménagement cède : 10 bureaux en L avec caissons, 10 fauteuils ergonomiques, 5 armoires classeurs. Marque Steelcase. État très bon. Vente par unité ou lot complet.",
             Listing.ListingCategory.HOME_GARDEN, Listing.ListingType.ITEM, Listing.ItemCondition.LIKE_NEW, 45000.0, "Casablanca, Maarif", 33.5898, -7.6031, 16, 0));
 
-        all.add(listing(users, 8, "Recherche mobilier bureau pour open space — Meknès",
-            "Startup cherche mobilier bureau pour 15 postes : bureaux, fauteuils, cloisons séparatives, caissons. Occasion acceptée si bon état. Budget 30 000 à 50 000 MAD.",
-            Listing.ListingCategory.HOME_GARDEN, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Meknes, Hamria", 33.8935, -5.5547, 20, 0));
-
         all.add(listing(users, 19, "Luminaires artisanaux laiton — Tanger",
             "Artisan propose lustres et appliques en laiton ciselé, fabriqués artisanalement. Sur mesure ou modèles catalogue. Finitions : dorée, argentée, cuivre. Livraison nationale.",
             Listing.ListingCategory.HOME_GARDEN, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 2500.0, "Tanger, Malabata", 35.7700, -5.8100, 16, 0));
@@ -273,10 +233,6 @@ public class DataSeeder implements ApplicationRunner {
         all.add(listing(users, 5, "Surplus djellabas homme — lot 500 unités Agadir",
             "Usine textile propose surplus production : 500 djellabas homme, tissus laine et coton mélangé, couleurs classiques. Tailles M à XXL. Idéal grossistes, marchands souk, exportateurs.",
             Listing.ListingCategory.CLOTHING, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 75000.0, "Agadir, Talborjt", 30.4278, -9.5981, 18, 0));
-
-        all.add(listing(users, 3, "Cherche surplus textile — boutique vêtements traditionnels",
-            "Commerçant cherche surplus djellabas, caftans, jabadors pour stock boutique Fes. Préférence pour lots 50-200 unités. Règlement comptant. Contact producteurs ou usines directement.",
-            Listing.ListingCategory.CLOTHING, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 0.0, "Fes, Médina", 34.0181, -5.0078, 12, 0));
 
         all.add(listing(users, 6, "Stock vêtements enfants 0-12 ans — déstockage Casablanca",
             "Importateur propose déstockage vêtements enfants toutes saisons : T-shirts, pantalons, robes, pyjamas. Marques no-name et quelques marques françaises. Lot de 2000 à 5000 pièces.",
@@ -287,10 +243,6 @@ public class DataSeeder implements ApplicationRunner {
             "Cabinet médical renouvelle équipement et propose : ECG Cardioline, tensiomètre numérique Withings, oxymètre, balance médicale. Tout étalonné et avec certificat de conformité.",
             Listing.ListingCategory.HEALTH_BEAUTY, Listing.ListingType.ITEM, Listing.ItemCondition.EXCELLENT, 22000.0, "Rabat, Agdal", 34.0209, -6.8416, 14, 0));
 
-        all.add(listing(users, 15, "Cherche matériel médical d'occasion — dispensaire rural",
-            "Association sanitaire cherche matériel médical d'occasion pour dispensaire rural : stéthoscopes, tensiomètres, petit matériel chirurgical. Don ou vente prix solidaire. Région Oujda.",
-            Listing.ListingCategory.HEALTH_BEAUTY, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Oujda, Centre", 34.6805, -1.9076, 10, 0));
-
         all.add(listing(users, 17, "Plantes médicinales séchées — pharmacopée marocaine",
             "Producteur propose gamme plantes médicinales séchées : romarin, thym, lavande, camomille, rose de Damas. Conditionnement professionnel, analyse sanitaire fournie. Idéal herboristeries, pharmacies, export.",
             Listing.ListingCategory.HEALTH_BEAUTY, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 180.0, "Agadir, Inzegane", 30.3597, -9.5332, 16, 15));
@@ -299,10 +251,6 @@ public class DataSeeder implements ApplicationRunner {
         all.add(listing(users, 8, "Pièces détachées Renault Dacia — lot important Meknès",
             "Garagiste propose lot de pièces détachées originales et après-marché : Renault Logan, Dacia Sandero, Clio III. Filtres, plaquettes, amortisseurs, alternateurs. Garantie 3 mois.",
             Listing.ListingCategory.AUTOMOTIVE, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 35000.0, "Meknes, Hamria", 33.8935, -5.5547, 22, 0));
-
-        all.add(listing(users, 14, "Cherche pièces moteur Renault 1.5 dCi — Oujda",
-            "Mécanicien cherche pièces moteur 1.5 dCi (K9K) : injecteurs, pompe haute pression, turbo reconditionné. Occasion acceptée si garantie donnée. Oujda ou envoi.",
-            Listing.ListingCategory.AUTOMOTIVE, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Oujda, Centre", 34.6805, -1.9076, 16, 0));
 
         all.add(listing(users, 4, "Vélos électriques d'occasion — lot 8 unités Tanger",
             "Location saisonnière revend lot de 8 vélos électriques (autonomie 60km, 250W, vitesse 25km/h) fin de saison. Batterie capacité 80%+. Idéal location, école, association.",
@@ -313,10 +261,6 @@ public class DataSeeder implements ApplicationRunner {
             "Exploitation agricole propose surplus compost organique certifié, issu de déchets végétaux compostés 6 mois. 5 à 20 tonnes disponibles. Livraison possible région Souss.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.EXCELLENT, 600.0, "Agadir, Inzegane", 30.3597, -9.5332, 14, 50));
 
-        all.add(listing(users, 0, "Cherche compost ou fumier — maraîchage bio Casablanca",
-            "Maraîcher bio cherche apport régulier de matière organique : compost, fumier de poulet ou bovin. 2 à 5 tonnes/mois. Livraison sur site préférée. Région Casablanca-Settat.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Casablanca, Hay Mohammadi", 33.5500, -7.5600, 18, 0));
-
         all.add(listing(users, 5, "Semences maraîchères certifiées — lot varié",
             "Distributeur propose lots de semences certifiées maraîchères : tomates, poivrons, courgettes, melons, pastèques. Variétés hybrides et traditionnelles. Rapport de certification inclus.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 2500.0, "Agadir, Talborjt", 30.4278, -9.5981, 20, 0));
@@ -324,10 +268,6 @@ public class DataSeeder implements ApplicationRunner {
         all.add(listing(users, 11, "Irrigation goutte-à-goutte — système complet occasion",
             "Exploitation cède système d'irrigation complet : pompe 2CV, filtres, tuyaux PE 16mm (2000m), goutteurs. Utilisé 2 saisons, excellent état. Idéal maraîchage 1 à 3 hectares.",
             Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 18000.0, "Casablanca, Bourgogne", 33.5731, -7.5898, 14, 0));
-
-        all.add(listing(users, 15, "Achat système goutte-à-goutte — exploitation Oujda",
-            "Agriculteur cherche système irrigation goutte-à-goutte complet pour 2 ha de maraîchage. Occasion ou neuf. Budget 20 000 MAD max. Livraison incluse souhaitée.",
-            Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Oujda, Centre", 34.6805, -1.9076, 10, 0));
 
         // ── 13. Artisanat & Poterie ───────────────────────────────────────────
         all.add(listing(users, 3, "Poterie et céramiques artisanales — lot export Fes",
@@ -352,18 +292,10 @@ public class DataSeeder implements ApplicationRunner {
             "Libraire propose lot de 200 manuels universitaires en français : droit des affaires, économie générale, gestion comptable, marketing. Éditions récentes (2019-2024). Vente par lot ou à l'unité.",
             Listing.ListingCategory.BOOKS_MEDIA, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 8000.0, "Rabat, Agdal", 34.0209, -6.8416, 14, 0));
 
-        all.add(listing(users, 7, "Matériel pédagogique — association alphabétisation",
-            "Association éducative cherche manuels alphabétisation adultes, cahiers, crayons pour programme d'alphabétisation en darija. Don ou achat symbolique. Région Casablanca.",
-            Listing.ListingCategory.BOOKS_MEDIA, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Casablanca, Ain Diab", 33.5600, -7.6700, 10, 0));
-
         // ── 16. Emballage & Conditionnement ──────────────────────────────────
         all.add(listing(users, 6, "Surplus emballages carton et plastique — Casablanca",
             "Grossiste propose surplus conditionnements : cartons double cannelure 50x30x30 (2000 unités), barquettes plastique alimentaire PP (5000 unités), film étirable industriel (20 rouleaux). Vente lot complet.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 12000.0, "Casablanca, Ain Diab", 33.5600, -7.6700, 10, 0));
-
-        all.add(listing(users, 2, "Cherche emballages pour producteur de confitures",
-            "Producteur artisanal de confitures cherche pots en verre 250g et 370g (minimum 500 pots), capsules et étiquettes vierges. Occasion acceptable si propres. Marrakech ou livraison.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Marrakech, Guéliz", 31.6295, -7.9811, 14, 0));
 
         all.add(listing(users, 18, "Matériel imprimerie — impression numérique Rabat",
             "Imprimerie revend matériel : traceur grand format HP DesignJet T520, massicot électrique A2, plastifieuse A3, stock papier 200 ramettes. Matériel en bon état, cause cessation.",
@@ -374,18 +306,10 @@ public class DataSeeder implements ApplicationRunner {
             "Agriculteur cède pompe centrifuge 5CV, débit 60m³/h, marque DAB. Excellent état, entretenue. Idéal irrigation champ ou remplissage bassin. Départ Marrakech.",
             Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.EXCELLENT, 7500.0, "Marrakech, Médina", 31.6340, -7.9890, 8, 0));
 
-        all.add(listing(users, 13, "Cherche pompe hydraulique pour puits — Casablanca",
-            "Propriétaire terrien cherche pompe immergée ou centrifuge pour puits 40m de profondeur, débit minimum 10m³/h. Occasion ou neuve. Région Casablanca-Berrechid.",
-            Listing.ListingCategory.TOOLS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Casablanca, Sidi Maarouf", 33.5400, -7.6400, 12, 0));
-
         // ── 18. Récupération & Recyclage ──────────────────────────────────────
         all.add(listing(users, 0, "Surplus palettes bois — lot 200 palettes Casablanca",
             "Entrepôt logistique cède surplus palettes bois EUR 80x120, en bon état, clouées. 200 palettes disponibles immédiatement. Idéal artisans, jardinerie, déco. Ramassage sur place.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 6000.0, "Casablanca, Hay Mohammadi", 33.5500, -7.5600, 8, 0));
-
-        all.add(listing(users, 11, "Cherche palettes bois pour projet aménagement",
-            "Designer d'intérieur cherche palettes bois en bon état pour aménagement café-coworking. 50 à 80 palettes. Casablanca ou livraison. Prix raisonnable souhaité.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Casablanca, Bourgogne", 33.5731, -7.5898, 12, 0));
 
         // ── 19. Gastronomie & Restauration ───────────────────────────────────
         all.add(listing(users, 2, "Surplus huile de table — 500 litres Marrakech",
@@ -395,10 +319,6 @@ public class DataSeeder implements ApplicationRunner {
         all.add(listing(users, 7, "Farine de blé T55 — lot 50 sacs 50kg",
             "Meunier propose lot de farine T55 (50 sacs de 50 kg), production récente, humidité <15%. Idéal boulangeries, pâtisseries, collectivités. Départ Casablanca, livraison négociable.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 20000.0, "Casablanca, Ain Diab", 33.5600, -7.6700, 16, 20));
-
-        all.add(listing(users, 4, "Cherche fournisseur de sucre en poudre — pâtisserie Tanger",
-            "Pâtisserie artisanale cherche fournisseur de sucre en poudre et glace, minimum 200 kg/mois. Contrat mensuel possible. Livraison à Tanger.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 0.0, "Tanger, Iberia", 35.7595, -5.8340, 14, 0));
 
         // ── 16. Santé animale & Élevage ───────────────────────────────────────
         all.add(listing(users, 15, "Surplus aliments bétail — son de blé 5 tonnes",
@@ -414,31 +334,58 @@ public class DataSeeder implements ApplicationRunner {
             "Entrepreneur cède surplus chantier : 500 parpaings, 20 sacs ciment Portland, 200 kg acier HA 8mm, carrelage 20m², sable lavé 2m³. Ramassage sur place Casablanca.",
             Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.NEW, 8500.0, "Casablanca, Sidi Maarouf", 33.5400, -7.6400, 10, 0));
 
-        all.add(listing(users, 14, "Cherche matériaux construction pour auto-construction",
-            "Particulier cherche parpaings, ciment, carrelage et fer à béton pour petite construction (60m²). Occasion ou surplus chantier accepté. Région Oujda-Nador.",
-            Listing.ListingCategory.OTHER, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Oujda, Centre", 34.6805, -1.9076, 8, 0));
-
         // ── 15. Sport & Loisirs ───────────────────────────────────────────────
         all.add(listing(users, 1, "Équipement salle de sport — lot complet occasion",
             "Salle de sport en restructuration cède : 5 tapis roulants Technogym, 10 vélos elliptiques, rack haltères 5-50kg, bancs de musculation. Tout en état de fonctionnement.",
             Listing.ListingCategory.SPORTS_OUTDOORS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 120000.0, "Rabat, Agdal", 34.0209, -6.8416, 18, 0));
-
-        all.add(listing(users, 10, "Cherche matériel salle de sport d'occasion",
-            "Association sportive cherche matériel musculation et cardio pour salle associative : quelques tapis, vélos, haltères. Budget limité, donations bienvenues. Casablanca.",
-            Listing.ListingCategory.SPORTS_OUTDOORS, Listing.ListingType.ITEM, Listing.ItemCondition.FAIR, 0.0, "Casablanca, Bourgogne", 33.5731, -7.5898, 14, 0));
 
         all.add(listing(users, 12, "Équipement randonnée et camping — lot Marrakech",
             "Loueur de matériel outdoor revend stock : tentes 2-4 pers. (15 unités), sacs de couchage -5°C (20 unités), sacs à dos 60L (12 unités). Tout en bon état. Idéal tour-opérateur, club montagne.",
             Listing.ListingCategory.SPORTS_OUTDOORS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 35000.0, "Marrakech, Médina", 31.6340, -7.9890, 14, 0));
 
         // ── 24. Jouets & Éducation enfants ────────────────────────────────────
-        all.add(listing(users, 7, "Jouets et matériel créatif — association enfants Casablanca",
-            "Association propose redistribution jouets, jeux de société, matériel activités manuelles (peinture, argile, perles). Tout en bon état. Don aux crèches et associations.",
-            Listing.ListingCategory.TOYS_GAMES, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Casablanca, Ain Diab", 33.5600, -7.6700, 12, 0));
+        // ── GRAND PUBLIC — Articles individuels pour démo troc ────────────────
+        // Casablanca : paires OFFER/NEED à valeurs proches pour scoring optimal
 
-        all.add(listing(users, 15, "Cherche jouets et matériel pédagogique — école rurale",
-            "École primaire rurale cherche jouets éducatifs, puzzles, jeux de construction, crayons de couleur, cahiers. Dons appréciés. Région Oujda. Viens chercher ou envoyer.",
-            Listing.ListingCategory.TOYS_GAMES, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 0.0, "Oujda, Centre", 34.6805, -1.9076, 6, 0));
+        all.add(listing(users, 0, "Vélo VTT Decathlon Rockrider — quasi neuf",
+            "VTT Decathlon Rockrider ST 520, taille M, acheté il y a 8 mois, très peu utilisé. Freins à disque hydrauliques, 21 vitesses, cadre aluminium. Excellent état cosmétique. Cherche en échange électroménager ou électronique de valeur équivalente. Remise en main propre Casablanca Maarif.",
+            Listing.ListingCategory.SPORTS_OUTDOORS, Listing.ListingType.ITEM, Listing.ItemCondition.LIKE_NEW, 1200.0, "Casablanca, Maarif", 33.5898, -7.6031, 28, 0));
+
+        all.add(listing(users, 9, "iPhone 12 Pro 128Go — très bon état",
+            "iPhone 12 Pro 128 Go, couleur Graphite, Face ID parfait, batterie 89% (affichage Apple). Vendu avec chargeur original et coque Spigen. Aucune rayure, pas de choc. Cherche en échange laptop ou tablette iPad de valeur similaire.",
+            Listing.ListingCategory.ELECTRONICS, Listing.ListingType.ITEM, Listing.ItemCondition.EXCELLENT, 2800.0, "Casablanca, Anfa", 33.5850, -7.6200, 42, 0));
+
+        all.add(listing(users, 18, "Four micro-ondes Samsung 28L — excellent état",
+            "Micro-ondes Samsung MS28J5215AS, 28 litres, 900W, fonction grill, écran digital. Utilisé 1 an, comme neuf, pas de traces. Avec plateau tournant. Cherche en échange petit matériel sport ou accessoires maison.",
+            Listing.ListingCategory.HOME_GARDEN, Listing.ListingType.ITEM, Listing.ItemCondition.LIKE_NEW, 650.0, "Casablanca, Hay Hassani", 33.5300, -7.6600, 22, 0));
+
+        all.add(listing(users, 10, "Manette PS4 DualShock 4 — noire, bon état",
+            "Manette Sony DualShock 4 officielle noire, utilisée 6 mois, toutes les touches fonctionnelles, pas de dérive. Câble USB inclus. Cherche en échange jeux PS4 ou accessoires gaming.",
+            Listing.ListingCategory.ELECTRONICS, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 420.0, "Casablanca, Bourgogne", 33.5731, -7.5898, 19, 0));
+
+        all.add(listing(users, 6, "Guitare électro-acoustique Yamaha FSX800C",
+            "Guitare électro-acoustique Yamaha FSX800C, table épicéa massif, corps auditorium, capteur System 66. Accordeur clip offert. Utilisée 2 ans par amateur éclairé, excellent état. Cherche en échange équipement photo ou électronique.",
+            Listing.ListingCategory.HOME_GARDEN, Listing.ListingType.ITEM, Listing.ItemCondition.EXCELLENT, 1800.0, "Casablanca, Ain Diab", 33.5600, -7.6700, 31, 0));
+
+        all.add(listing(users, 18, "Poussette Chicco Bravo Trio — système 3 en 1",
+            "Poussette Chicco Bravo Trio (nacelle + siège auto + chassis), couleur Jet Black. Utilisée jusqu'à 18 mois, très bon état, toutes les fixations fonctionnelles. Lavable. Cherche en échange équipement enfant ou mobilier chambre bébé.",
+            Listing.ListingCategory.TOYS_GAMES, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 1500.0, "Casablanca, Hay Hassani", 33.5300, -7.6600, 27, 0));
+
+        all.add(listing(users, 1, "Appareil photo Nikon D3500 + objectif 18-55mm",
+            "Nikon D3500, 24,2 Mpx, APS-C, avec objectif kit 18-55mm AF-P. 8500 déclenchements. État excellent, aucun choc. Avec sac, 2 batteries, chargeur, carte SD 32Go. Cherche en échange drone ou équipement vidéo.",
+            Listing.ListingCategory.ELECTRONICS, Listing.ListingType.ITEM, Listing.ItemCondition.EXCELLENT, 3200.0, "Rabat, Agdal", 34.0209, -6.8416, 38, 0));
+
+        all.add(listing(users, 2, "Trottinette électrique Xiaomi Mi 3 — peu utilisée",
+            "Trottinette électrique Xiaomi Mi Scooter 3, autonomie 30km, vitesse maxi 25km/h, 12,5 kg. Utilisée 3 mois, état parfait, batterie 95%. Cherche en échange vélo électrique ou scooter.",
+            Listing.ListingCategory.AUTOMOTIVE, Listing.ListingType.ITEM, Listing.ItemCondition.LIKE_NEW, 2200.0, "Marrakech, Guéliz", 31.6295, -7.9811, 34, 0));
+
+        all.add(listing(users, 4, "Machine à café Nespresso Vertuo — capsules incluses",
+            "Nespresso Vertuo Next, couleur noire, avec mousseur Aeroccino 3. Utilisée 1 an, détartrée, excellente condition. Lot de 50 capsules diverses offert. Cherche en échange robot cuiseur ou pétrin.",
+            Listing.ListingCategory.HOME_GARDEN, Listing.ListingType.ITEM, Listing.ItemCondition.GOOD, 850.0, "Tanger, Iberia", 35.7595, -5.8340, 29, 0));
+
+        all.add(listing(users, 7, "Lot livres développement personnel et entrepreneuriat",
+            "Lot de 25 livres en très bon état : Lean Startup, Zero to One, Atomic Habits, L'art de la guerre, etc. En français et anglais. Idéal entrepreneurs, étudiants en gestion. Casablanca.",
+            Listing.ListingCategory.BOOKS_MEDIA, Listing.ListingType.ITEM, Listing.ItemCondition.LIKE_NEW, 800.0, "Casablanca, Ain Diab", 33.5600, -7.6700, 21, 0));
 
         return listingRepository.saveAll(all).size();
     }
@@ -451,6 +398,9 @@ public class DataSeeder implements ApplicationRunner {
         User owner = users.get(userIdx % users.size());
         LocalDateTime created = LocalDateTime.now().minusDays(rnd.nextInt(180) + 1);
 
+        boolean isOffer = price > 0;
+        Listing.ExchangeIntent intent = isOffer ? Listing.ExchangeIntent.OFFER : Listing.ExchangeIntent.NEED;
+
         Listing l = new Listing();
         l.setTitle(title);
         l.setDescription(description);
@@ -459,9 +409,10 @@ public class DataSeeder implements ApplicationRunner {
         l.setCondition(condition);
         l.setStatus(Listing.ListingStatus.ACTIVE);
         l.setOwner(owner);
-        l.setEstimatedValue(price > 0 ? price : null);
+        l.setExchangeIntent(intent);
+        l.setEstimatedValue(isOffer ? price : null);
         l.setCurrency("MAD");
-        l.setIsNegotiable(price > 0 && rnd.nextBoolean());
+        l.setIsNegotiable(isOffer && rnd.nextBoolean());
         l.setIsFeatured(false);
         l.setLocationText(location);
         l.setLatitude(lat + (rnd.nextDouble() - 0.5) * 0.02);

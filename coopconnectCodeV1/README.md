@@ -206,7 +206,7 @@ Score final = Σ (poids_i × score_i)
 | **Proximité géographique** | **25%** | Distance haversine (km) entre les coordonnées GPS |
 | Similarité de contenu | 20% | TF-IDF bigramme + similarité cosinus |
 | Correspondance catégorie | 10% | Correspondance exacte ou catégories complémentaires |
-| Complémentarité offre/besoin | 10% | OFFER vs NEED, analyse sémantique |
+| Complémentarité (troc) | 10% | OFFER+OFFER = 1.0, paires non-troc = 0.2 |
 
 > **Supprimé** : le "Score de confiance" (5%) a été retiré du scoring et des explications Gemini.
 
@@ -331,26 +331,11 @@ GET  /docs                  — Documentation Swagger interactive
 | `/login` | Connexion |
 | `/register` | Inscription |
 
-**Notes importantes pour les développeurs backend** :
+**Notes développeur** :
 
-1. **[PRIORITÉ] Nouveau scoring matching** : Revoir les poids dans `matching-service/app/matching.py` :
-   - Valeur estimée → **35%** (était 10%)
-   - Distance → **25%** (était 20%)
-   - TF-IDF contenu → 20% (était 30%)
-   - Catégorie → 10% (était 20%)
-   - Complémentarité offre/besoin → 10% (était 15%)
-   - Score de confiance → **supprimé** (était 5%)
-   Voir la section "Proximité de valeur estimée" ci-dessus pour le prompt Gemini et la fonction `value_score()`.
+1. **Filtre `EXCHANGED`** : Le frontend filtre les annonces au statut `EXCHANGED` côté client dans Browse et Mes annonces. Pour une solution propre, le endpoint `GET /api/v1/listings` devrait exclure les annonces échangées par défaut.
 
-2. **[PRIORITÉ] Estimation de valeur à la création** : Ajouter le champ `estimatedValueMAD` (Double, nullable) à l'entité `Listing`. Après `listingRepository.save()`, appeler le endpoint `/api/match/estimate` du Matching AI de manière asynchrone (ne pas bloquer la réponse HTTP) et persister la valeur retournée. Exposer un endpoint `POST /api/match/estimate` dans le Matching AI si absent.
-
-3. **Filtre `EXCHANGED`** : Le frontend filtre les annonces au statut `EXCHANGED` côté client dans Browse et Mes annonces. Pour une solution propre, le endpoint `GET /api/v1/listings` devrait accepter un paramètre `?status=ACTIVE` et exclure les annonces échangées par défaut.
-
-4. **`locationText` dans le matching** : Le frontend affiche `locationText` à côté de la distance dans les cartes de recommandation si ce champ est présent dans la réponse de l'API matching. Le Core Service peut l'inclure dans l'enrichissement des résultats (`MatchingService`).
-
-5. **Texte "Utilisateur fiable"** : Le frontend filtre (regex) les mentions "Utilisateur fiable" et "Note de confiance" dans les explications Gemini. Pour une solution définitive, supprimer cette dimension du prompt dans `matching-service/app/matching.py`.
-
-6. **Sélecteur de localisation** : Le composant `LocationPicker` (Leaflet) utilise l'API publique Nominatim (OpenStreetMap) pour le géocodage inverse. En production, prévoir une clé API ou un service de géocodage privé.
+2. **Sélecteur de localisation** : Le composant `LocationPicker` (Leaflet) utilise l'API publique Nominatim (OpenStreetMap) pour le géocodage inverse. En production, prévoir un service de géocodage privé.
 
 ---
 
@@ -409,10 +394,12 @@ coopconnect/
 (Casablanca, Rabat, Marrakech, Fes, Tanger, Agadir, Meknes, Oujda, Kenitra...)
 avec des profils variés (particuliers, professionnels, entreprises, associations).
 
-**Core Service** : 121 annonces couvrant tous les secteurs :
-agriculture & alimentation, électronique, outillage, services professionnels,
-transport, formation, artisanat, immobilier, énergies renouvelables, BTP, etc.
+**Core Service** : 63 annonces OFFER couvrant tous les secteurs :
+agriculture & alimentation, électronique, outillage, artisanat, textile,
+santé, automobile, énergies renouvelables, BTP, sport, grand public, etc.
 Toutes les annonces ont des coordonnées GPS réelles correspondant à leur ville.
+Toutes sont de type OFFER avec une valeur estimée en MAD — aucune annonce NEED
+(CoopConnect est une plateforme de **troc pur** : les deux parties doivent offrir quelque chose).
 
 ---
 
@@ -450,6 +437,7 @@ MIAGE — Université Côte d'Azur / EMSI Casablanca — 2025-2026
 
 | Version | Date | Changements principaux |
 |---------|------|------------------------|
+| V1.4 | Juin 2026 | **Troc pur** : suppression des 34 annonces NEED du DataSeeder — toutes les annonces sont désormais OFFER avec valeur estimée en MAD · **Matching** : OFFER+OFFER = complémentarité 1.0 (les deux parties ont quelque chose à donner) · **Nettoyage backend** : suppression de 16 fichiers morts (Organization, Partnership, Resource, UserSkill, Notification, ListingImage, ListingTag, ExchangeDocument, Review + leurs repositories/DTOs) et des relations JPA inutilisées dans User, Listing, Exchange |
 | V1.3 | Juin 2026 | **Concept troc clarifié** : suppression catégories SERVICES/SKILLS_EDUCATION/TRANSPORTATION/REAL_ESTATE et types SERVICE/SKILL/SPACE/TRANSPORT partout (backend enum, DataSeeder, frontend) · ~40 annonces demo service retirées · **Matching AI** : poids valeur → 35%, distance → 25%, trust supprimé, price_proximity_score avec tolérance troc ±30% · Prompt Gemini MAD contextualisé marché marocain · Favicon leaf + titre onglet "CoopConnect" · Fix pagination Browse |
 | V1.2 | Mai 2026 | **Matching** : poids valeur estimée → 35% (priorité max), distance → 25%, score confiance supprimé · Spécification estimation MAD via Gemini (marché marocain) · Spécification `estimatedValueMAD` dans entité Listing · Carte MapView : barre de contrôle transparente + carte arrondie avec marges · Landing : illustration échange avec fondu de bords |
 | V1.1 | Mai 2026 | Sélecteur carte pour localisation · Mini-carte sur page annonce · Layout 3-col pour propriétaire · Filtre annonces échangées · Suppression horodatage et vues · Nom app → CoopConnect · Labels "IA" retirés · États vides améliorés · Accessibilité WCAG AA · Design system Refont 2026 (Manrope + Bricolage Grotesque, palette parchment/moss/clay) |

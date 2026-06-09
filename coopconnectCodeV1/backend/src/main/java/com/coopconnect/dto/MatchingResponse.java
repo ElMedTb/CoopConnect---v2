@@ -63,6 +63,9 @@ public class MatchingResponse {
 
         private double complementarity;
 
+        @JsonProperty("price_proximity")
+        private double priceProximity;
+
         @JsonProperty("trust_weight")
         private double trustWeight;
     }

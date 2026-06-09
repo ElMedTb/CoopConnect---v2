@@ -70,6 +70,10 @@ public class Listing extends BaseEntity {
     @JoinColumn(name = "owner_id", nullable = false, foreignKey = @ForeignKey(name = "fk_listing_owner"))
     private User owner;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "exchange_intent")
+    private ExchangeIntent exchangeIntent = ExchangeIntent.OFFER;
+
     @Column(name = "estimated_value")
     private Double estimatedValue;
 
@@ -149,13 +153,7 @@ public class Listing extends BaseEntity {
     private String aiMatchingTags;
 
     @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ListingImage> images;
-
-    @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Exchange> exchanges;
-
-    @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ListingTag> tags;
 
     /**
      * Enum for listing categories — physical goods only (barter platform)
@@ -182,6 +180,13 @@ public class Listing extends BaseEntity {
      */
     public enum ListingType {
         ITEM
+    }
+
+    /**
+     * Enum for exchange intent — used by the AI matching engine
+     */
+    public enum ExchangeIntent {
+        OFFER, NEED, DONATE
     }
 
     /**

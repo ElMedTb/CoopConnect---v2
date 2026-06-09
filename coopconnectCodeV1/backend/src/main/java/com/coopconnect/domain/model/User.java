@@ -157,18 +157,6 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Exchange> exchangesAsProvider;
 
-    @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Review> givenReviews;
-
-    @OneToMany(mappedBy = "reviewedUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Review> receivedReviews;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<UserSkill> skills;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Notification> notifications;
-
     // UserDetails implementation
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

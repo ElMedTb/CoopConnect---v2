@@ -11,6 +11,7 @@ from app.price_estimator import estimate_price, price_proximity_score
 
 
 COMPLEMENTARY_PAIRS = {
+    (ExchangeIntent.OFFER, ExchangeIntent.OFFER),  # troc pur : les deux ont quelque chose à donner
     (ExchangeIntent.OFFER, ExchangeIntent.NEED),
     (ExchangeIntent.NEED, ExchangeIntent.OFFER),
     (ExchangeIntent.DONATE, ExchangeIntent.NEED),
@@ -107,7 +108,10 @@ def _build_explanation(
     parts = []
 
     if breakdown.complementarity >= 0.9:
-        if query.exchange_intent == ExchangeIntent.OFFER:
+        pair = (query.exchange_intent, candidate.exchange_intent) if query.exchange_intent and candidate.exchange_intent else None
+        if pair == (ExchangeIntent.OFFER, ExchangeIntent.OFFER):
+            parts.append("Échange direct possible — les deux parties ont quelque chose à proposer")
+        elif query.exchange_intent == ExchangeIntent.OFFER:
             parts.append("Votre offre répond directement à ce besoin")
         elif query.exchange_intent == ExchangeIntent.NEED:
             parts.append("Cette offre correspond à votre besoin")

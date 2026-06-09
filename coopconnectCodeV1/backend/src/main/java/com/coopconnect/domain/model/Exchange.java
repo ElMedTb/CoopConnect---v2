@@ -145,13 +145,7 @@ public class Exchange extends BaseEntity {
     private String disputeResolution;
 
     @OneToMany(mappedBy = "exchange", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Review> reviews;
-
-    @OneToMany(mappedBy = "exchange", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ExchangeMessage> messages;
-
-    @OneToMany(mappedBy = "exchange", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ExchangeDocument> documents;
 
     public enum ExchangeStatus {
         REQUESTED, ACCEPTED, REJECTED, CANCELLED, IN_PROGRESS, COMPLETED, DISPUTED
