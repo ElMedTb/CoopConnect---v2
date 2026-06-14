@@ -16,6 +16,10 @@ public interface ListingRepository extends JpaRepository<Listing, UUID> {
 
     Page<Listing> findByStatus(Listing.ListingStatus status, Pageable pageable);
 
+    long countByStatus(Listing.ListingStatus status);
+
+    long countByIsActiveTrue();
+
     @Query("SELECT l FROM Listing l WHERE l.owner.id = :ownerId AND l.isActive = true")
     Page<Listing> findByOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);
 

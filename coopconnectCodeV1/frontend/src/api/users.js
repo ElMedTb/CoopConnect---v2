@@ -10,6 +10,11 @@ export const usersApi = {
   adminUpdateSubscription: (id, data) => client.put(`/users/${id}/subscription`, data),
 }
 
+export const adminApi = {
+  getStats: () => client.get('/admin/stats'),
+  getExchanges: (params) => client.get('/admin/exchanges', { params }),
+}
+
 export const authVerificationApi = {
   sendPhoneCode: (data) => client.post('/auth/phone/send-code', data),
   verifyPhoneCode: (data) => client.post('/auth/phone/verify-code', data),

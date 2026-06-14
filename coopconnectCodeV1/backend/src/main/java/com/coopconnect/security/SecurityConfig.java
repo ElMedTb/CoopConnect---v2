@@ -103,6 +103,7 @@ public class SecurityConfig {
                 // Protected endpoints (authenticated)
                 .requestMatchers("/api/v1/exchanges/**").authenticated()
                 .requestMatchers("/api/v1/matches/**").authenticated()
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/v1/users/me").authenticated()
                 .requestMatchers("/api/v1/users/me/password").authenticated()
                 .anyRequest().authenticated()

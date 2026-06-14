@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -21,6 +22,19 @@ public interface ExchangeRepository extends JpaRepository<Exchange, UUID> {
 
     Page<Exchange> findByStatus(Exchange.ExchangeStatus status, Pageable pageable);
 
+    long countByStatus(Exchange.ExchangeStatus status);
+
     @Query("SELECT COUNT(e) FROM Exchange e WHERE (e.requester.id = :userId OR e.provider.id = :userId) AND e.status = :status")
     long countByUserAndStatus(@Param("userId") UUID userId, @Param("status") Exchange.ExchangeStatus status);
+
+    @Query(value = "SELECT e FROM Exchange e " +
+            "JOIN FETCH e.requester " +
+            "JOIN FETCH e.provider " +
+            "JOIN FETCH e.listing " +
+            "LEFT JOIN FETCH e.offeredListing",
+            countQuery = "SELECT COUNT(e) FROM Exchange e")
+    Page<Exchange> findAllForAdmin(Pageable pageable);
+
+    @Query("SELECT e FROM Exchange e WHERE e.status = 'COMPLETED' AND e.completionConfirmedAt IS NOT NULL")
+    List<Exchange> findCompletedWithCompletionDate();
 }
