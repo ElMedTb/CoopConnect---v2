@@ -1,7 +1,8 @@
 param(
     [switch]$SkipInstall,
     [switch]$NoBrowser,
-    [switch]$DryRun
+    [switch]$DryRun,
+    [switch]$Wait
 )
 
 $ErrorActionPreference = "Stop"
@@ -131,7 +132,7 @@ Read-Host 'Service arrete. Appuyez sur Entree pour fermer cette fenetre'
         "-File", $launcherFile
     ) -WorkingDirectory $WorkingDirectory -WindowStyle Normal | Out-Null
 
-    if ($Port) {
+    if ($Port -and $Wait) {
         Wait-Port $Title $Port $WaitSeconds | Out-Null
     }
 }
@@ -269,6 +270,7 @@ Write-Host "Eureka         : http://localhost:8761"
 Write-Host "Logs           : $LOG_DIR"
 Write-Host ""
 Write-Host "Pour relancer proprement, fermez les fenetres des services deja ouvertes puis relancez RUN_PROJECT.cmd."
+Write-Host "Mode rapide: les services demarrent en parallele. Ajoutez -Wait pour attendre chaque port."
 Write-Host ""
 
 if (-not $NoBrowser -and -not $DryRun) {

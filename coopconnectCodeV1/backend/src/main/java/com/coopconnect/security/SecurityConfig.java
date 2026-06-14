@@ -85,6 +85,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints
                 .requestMatchers("/api/v1/public/**").permitAll()
+                // Protected listing endpoints must be evaluated before the public listing wildcard.
+                .requestMatchers(HttpMethod.GET, "/api/v1/listings/my").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/v1/listings").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/listings/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/listings/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/listings").permitAll()
                 .requestMatchers("/api/v1/listings/**").permitAll()
                 .requestMatchers("/api/v1/organizations/**").permitAll()
                 .requestMatchers("/api/v1/resources/**").permitAll()

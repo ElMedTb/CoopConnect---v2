@@ -170,7 +170,7 @@ public class User extends BaseEntity implements UserDetails {
     private Boolean credibilityVerified = false;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "subscription_plan", nullable = false)
+    @Column(name = "subscription_plan")
     private SubscriptionPlan subscriptionPlan = SubscriptionPlan.STANDARD;
 
     @Column(name = "premium_activated_at")
@@ -179,13 +179,13 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "premium_expires_at")
     private LocalDateTime premiumExpiresAt;
 
-    @Column(name = "matching_monthly_quota", nullable = false)
+    @Column(name = "matching_monthly_quota")
     private Integer matchingMonthlyQuota = 3;
 
     @Column(name = "matching_usage_month", length = 7)
     private String matchingUsageMonth;
 
-    @Column(name = "matching_usage_count", nullable = false)
+    @Column(name = "matching_usage_count")
     private Integer matchingUsageCount = 0;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

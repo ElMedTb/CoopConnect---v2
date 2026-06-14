@@ -18,18 +18,24 @@ client.interceptors.response.use(
   (response) => response,
   async (error) => {
     const original = error.config
-    if (error.response?.status === 401 && !original._retry) {
+    const isAuthEndpoint = original?.url?.startsWith('/auth/')
+    if (error.response?.status === 401 && !original._retry && !isAuthEndpoint) {
       original._retry = true
       const refreshToken = localStorage.getItem('refresh_token')
       if (refreshToken) {
         try {
-          const { data } = await axios.post('/api/v1/auth/refresh', { refreshToken })
+          const { data } = await axios.post('/api/v1/auth/refresh', null, {
+            headers: { 'Refresh-Token': refreshToken },
+          })
           localStorage.setItem('access_token', data.accessToken)
           original.headers.Authorization = `Bearer ${data.accessToken}`
           return client(original)
-        } catch {
-          localStorage.clear()
-          window.location.href = '/login'
+        } catch (refreshError) {
+          if ([401, 403].includes(refreshError.response?.status)) {
+            localStorage.removeItem('access_token')
+            localStorage.removeItem('refresh_token')
+            localStorage.removeItem('user')
+          }
         }
       }
     }

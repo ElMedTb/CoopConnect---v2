@@ -42,13 +42,16 @@ public class AuthController {
 
     @PostMapping("/refresh")
     @Operation(summary = "Refresh JWT token")
-    public ResponseEntity<AuthResponse> refresh(@RequestHeader("Refresh-Token") String token) {
-        return ResponseEntity.ok(authService.refreshToken(token));
+    public ResponseEntity<AuthResponse> refresh(
+            @RequestHeader(value = "Refresh-Token", required = false) String token,
+            @RequestBody(required = false) Map<String, String> body) {
+        String refreshToken = token != null ? token : body != null ? body.get("refreshToken") : null;
+        return ResponseEntity.ok(authService.refreshToken(refreshToken));
     }
 
     @PostMapping("/logout")
     @Operation(summary = "Logout")
-    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<Void> logout(@RequestHeader(value = "Authorization", required = false) String token) {
         authService.logout(token);
         return ResponseEntity.ok().build();
     }
