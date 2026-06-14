@@ -148,6 +148,6 @@ public class UserController {
 
     private com.coopconnect.domain.model.User.SubscriptionPlan asSubscriptionPlan(Object value) {
         if (value == null || value.toString().isBlank()) return com.coopconnect.domain.model.User.SubscriptionPlan.STANDARD;
-        return com.coopconnect.domain.model.User.SubscriptionPlan.valueOf(value.toString());
+        return com.coopconnect.domain.model.User.SubscriptionPlan.valueOf(value.toString().trim().toUpperCase());
     }
 }

@@ -229,6 +229,7 @@ export default function ListingDetail() {
   const [matches, setMatches] = useState([])
   const [loading, setLoading] = useState(true)
   const [matchLoading, setMatchLoading] = useState(false)
+  const [matchErrorMessage, setMatchErrorMessage] = useState('')
   const [error, setError] = useState('')
   const [showExchangeModal, setShowExchangeModal] = useState(false)
   const [exchangeSuccess, setExchangeSuccess] = useState(false)
@@ -250,15 +251,18 @@ export default function ListingDetail() {
     listing.ownerId === user.id
   )
 
-  // Charger les reco IA uniquement pour les PROPRES annonces
-  useEffect(() => {
+  const runOwnerMatching = () => {
     if (!listing || !isOwner) return
     setMatchLoading(true)
+    setMatchErrorMessage('')
     matchesApi.findForListing(id, { maxResults: 8 })
       .then((res) => setMatches((res.data?.matches || []).map(normalizeMatch)))
-      .catch(() => setMatches([]))
+      .catch((err) => {
+        setMatches([])
+        setMatchErrorMessage(err.response?.data?.message || 'Analyse IA impossible. Reessayez.')
+      })
       .finally(() => setMatchLoading(false))
-  }, [listing, isOwner, id])
+  }
 
   const handleDelete = async () => {
     setDeleteError('')
@@ -404,6 +408,10 @@ export default function ListingDetail() {
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="w-4 h-4 text-forest-600" aria-hidden="true" />
                 <h2 className="section-title">Recommandations</h2>
+                <button onClick={runOwnerMatching} className="btn-secondary text-xs px-3 py-1.5 ml-auto">
+                  <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                  Lancer l'analyse IA
+                </button>
               </div>
               {matchLoading ? (
                 <div className="space-y-3">
@@ -423,7 +431,9 @@ export default function ListingDetail() {
               ) : matches.length === 0 ? (
                 <div className="card p-6 text-center">
                   <Sparkles className="w-7 h-7 text-stone-300 mx-auto mb-2" aria-hidden="true" />
-                  <p className="text-sm text-stone-500">Aucune recommandation pour l'instant.</p>
+                  <p className="text-sm text-stone-500">
+                    {matchErrorMessage || "Lancez l'analyse IA pour afficher les recommandations."}
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-3">

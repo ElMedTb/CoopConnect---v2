@@ -317,7 +317,7 @@ public class AuthService {
     }
 
     private User.UserType resolvePublicUserType(String rawUserType) {
-        User.UserType type = User.UserType.valueOf(rawUserType != null ? rawUserType : "INDIVIDUAL");
+        User.UserType type = User.UserType.valueOf(rawUserType != null ? rawUserType.trim().toUpperCase() : "INDIVIDUAL");
         if (type == User.UserType.ADMIN) {
             throw new RuntimeException("Admin accounts cannot be created from public registration");
         }
