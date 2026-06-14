@@ -1,6 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { adminApi, usersApi } from '../api/users'
-import { Activity, ArrowLeftRight, RefreshCw, ShieldCheck, Sparkles, Users } from 'lucide-react'
+
+const STATUS_STYLES = {
+  REQUESTED: 'bg-blue-100 text-blue-800 border-blue-200',
+  ACCEPTED: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+  IN_PROGRESS: 'bg-amber-100 text-amber-800 border-amber-200',
+  COMPLETED: 'bg-green-100 text-green-800 border-green-200',
+  REJECTED: 'bg-rose-100 text-rose-800 border-rose-200',
+  CANCELLED: 'bg-stone-100 text-stone-700 border-stone-200',
+  DISPUTED: 'bg-red-100 text-red-800 border-red-200',
+}
+
+const BAR_COLORS = [
+  'bg-blue-500',
+  'bg-emerald-500',
+  'bg-amber-500',
+  'bg-rose-500',
+  'bg-cyan-500',
+  'bg-violet-500',
+  'bg-stone-500',
+]
 
 function formatPlan(user) {
   if (user.premiumActive) return 'PREMIUM'
@@ -11,12 +30,18 @@ function pct(value) {
   return `${Number(value || 0).toFixed(1)}%`
 }
 
-function Stat({ label, value, hint, icon: Icon }) {
+function Stat({ label, value, hint, tone = 'stone' }) {
+  const tones = {
+    blue: 'border-l-blue-500',
+    green: 'border-l-emerald-500',
+    amber: 'border-l-amber-500',
+    rose: 'border-l-rose-500',
+    stone: 'border-l-stone-400',
+  }
   return (
-    <div className="card p-4">
-      <div className="flex items-center justify-between mb-3">
+    <div className={`card p-4 border-l-4 ${tones[tone] || tones.stone}`}>
+      <div className="mb-3">
         <p className="text-xs font-semibold uppercase tracking-widest text-stone-400">{label}</p>
-        {Icon && <Icon className="w-4 h-4 text-stone-400" aria-hidden="true" />}
       </div>
       <p className="text-2xl font-bold text-stone-900">{value}</p>
       {hint && <p className="text-xs text-stone-500 mt-1 leading-relaxed">{hint}</p>}
@@ -24,17 +49,81 @@ function Stat({ label, value, hint, icon: Icon }) {
   )
 }
 
-function StatusRows({ values }) {
+function ProgressMetric({ label, value, color = 'bg-forest-700', detail }) {
+  const numeric = Math.max(0, Math.min(100, Number(value || 0)))
   return (
-    <div className="divide-y divide-stone-100">
-      {Object.entries(values || {}).map(([key, value]) => (
-        <div key={key} className="flex items-center justify-between py-2 text-sm">
-          <span className="text-stone-600">{key}</span>
-          <span className="font-semibold text-stone-900">{value}</span>
-        </div>
-      ))}
+    <div>
+      <div className="flex items-center justify-between gap-3 mb-1.5">
+        <span className="text-sm text-stone-600">{label}</span>
+        <span className="text-sm font-semibold text-stone-900">{pct(numeric)}</span>
+      </div>
+      <div className="h-2.5 bg-stone-100 rounded-full overflow-hidden">
+        <div className={`h-full rounded-full ${color}`} style={{ width: `${numeric}%` }} />
+      </div>
+      {detail && <p className="text-xs text-stone-400 mt-1">{detail}</p>}
     </div>
   )
+}
+
+function DistributionChart({ values, total, labelMap = {} }) {
+  const entries = Object.entries(values || {}).filter(([, value]) => Number(value) > 0)
+  if (entries.length === 0) {
+    return <p className="text-sm text-stone-500">Aucune donnee disponible.</p>
+  }
+  const baseTotal = total || entries.reduce((sum, [, value]) => sum + Number(value || 0), 0)
+
+  return (
+    <div className="space-y-3">
+      <div className="flex h-3 rounded-full overflow-hidden bg-stone-100">
+        {entries.map(([key, value], index) => (
+          <div
+            key={key}
+            className={BAR_COLORS[index % BAR_COLORS.length]}
+            style={{ width: `${baseTotal ? (Number(value) / baseTotal) * 100 : 0}%` }}
+            title={`${labelMap[key] || key}: ${value}`}
+          />
+        ))}
+      </div>
+      <div className="grid sm:grid-cols-2 gap-x-4 gap-y-2">
+        {entries.map(([key, value], index) => (
+          <div key={key} className="flex items-center justify-between gap-3 text-sm">
+            <span className="flex items-center gap-2 min-w-0">
+              <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${BAR_COLORS[index % BAR_COLORS.length]}`} />
+              <span className="text-stone-600 truncate">{labelMap[key] || key}</span>
+            </span>
+            <span className="font-semibold text-stone-900">{value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function BarRows({ values, total, labelMap = {} }) {
+  const entries = Object.entries(values || {})
+  const max = Math.max(1, ...entries.map(([, value]) => Number(value || 0)))
+  return (
+    <div className="space-y-3">
+      {entries.map(([key, value], index) => {
+        const width = total ? (Number(value || 0) / total) * 100 : (Number(value || 0) / max) * 100
+        return (
+          <div key={key}>
+            <div className="flex items-center justify-between gap-3 mb-1">
+              <span className="text-sm text-stone-600">{labelMap[key] || key}</span>
+              <span className="text-sm font-semibold text-stone-900">{value}</span>
+            </div>
+            <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+              <div className={`h-full rounded-full ${BAR_COLORS[index % BAR_COLORS.length]}`} style={{ width: `${Math.max(4, width)}%` }} />
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function statusClass(status) {
+  return STATUS_STYLES[status] || 'bg-stone-100 text-stone-700 border-stone-200'
 }
 
 export default function AdminUsers() {
@@ -88,12 +177,8 @@ export default function AdminUsers() {
     <div className="min-h-screen bg-stone-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-forest-700" aria-hidden="true" />
-            <h1 className="page-header">Administration</h1>
-          </div>
+          <h1 className="page-header">Administration</h1>
           <button onClick={loadAll} className="btn-secondary text-xs px-3 py-1.5 w-fit">
-            <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
             Actualiser
           </button>
         </div>
@@ -127,47 +212,84 @@ export default function AdminUsers() {
         ) : tab === 'overview' ? (
           <div className="space-y-6">
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Stat icon={Users} label="Utilisateurs" value={stats?.totalUsers || 0} hint={`${stats?.activeUsers || 0} actifs`} />
-              <Stat icon={Sparkles} label="Premium" value={stats?.premiumUsers || 0} hint={`Conversion: ${pct(stats?.premiumConversionRate)}`} />
-              <Stat icon={ArrowLeftRight} label="Echanges" value={stats?.totalExchanges || 0} hint={`Completion: ${pct(stats?.exchangeCompletionRate)}`} />
-              <Stat icon={Activity} label="Matching IA" value={stats?.monthlyMatchingUsage || 0} hint={`${stats?.standardUsersAtQuota || 0} standards au quota`} />
+              <Stat tone="blue" label="Utilisateurs" value={stats?.totalUsers || 0} hint={`${stats?.activeUsers || 0} actifs`} />
+              <Stat tone="green" label="Premium" value={stats?.premiumUsers || 0} hint={`Conversion: ${pct(stats?.premiumConversionRate)}`} />
+              <Stat tone="amber" label="Echanges" value={stats?.totalExchanges || 0} hint={`Completion: ${pct(stats?.exchangeCompletionRate)}`} />
+              <Stat tone="rose" label="Matching IA" value={stats?.monthlyMatchingUsage || 0} hint={`${stats?.standardUsersAtQuota || 0} standards au quota`} />
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-4">
+              <div className="card p-5">
+                <h2 className="section-title mb-4">Qualite utilisateurs</h2>
+                <div className="space-y-4">
+                  <ProgressMetric label="Emails verifies" value={stats?.emailVerificationRate} color="bg-blue-500" />
+                  <ProgressMetric label="Telephones verifies" value={stats?.phoneVerificationRate} color="bg-emerald-500" />
+                  <ProgressMetric label="Onboarding complet" value={stats?.onboardingCompletionRate} color="bg-amber-500" />
+                  <ProgressMetric label="Credibilite validee" value={stats?.credibilityVerificationRate} color="bg-violet-500" />
+                </div>
+              </div>
+              <div className="card p-5">
+                <h2 className="section-title mb-4">Monetisation et matching</h2>
+                <div className="space-y-4">
+                  <ProgressMetric label="Conversion premium" value={stats?.premiumConversionRate} color="bg-emerald-500" detail={`${stats?.premiumUsers || 0} premium / ${stats?.totalUsers || 0} utilisateurs`} />
+                  <ProgressMetric label="Standards au quota IA" value={stats?.standardUsers ? ((stats?.standardUsersAtQuota || 0) * 100) / stats.standardUsers : 0} color="bg-rose-500" detail={`${stats?.standardUsersAtQuota || 0} comptes bloques par quota`} />
+                  <div className="grid grid-cols-2 gap-3 pt-1">
+                    <div className="rounded-lg border border-cyan-100 bg-cyan-50 px-3 py-2">
+                      <p className="text-xs text-cyan-700 font-medium">Usage IA mensuel</p>
+                      <p className="text-xl font-bold text-cyan-900">{stats?.monthlyMatchingUsage || 0}</p>
+                    </div>
+                    <div className="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2">
+                      <p className="text-xs text-amber-700 font-medium">Quota standard restant</p>
+                      <p className="text-xl font-bold text-amber-900">{stats?.totalRemainingStandardQuota || 0}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-4">
               <div className="card p-5">
-                <h2 className="section-title mb-4">Qualite utilisateurs</h2>
-                <StatusRows values={{
-                  'Email verifies': pct(stats?.emailVerificationRate),
-                  'Telephone verifies': pct(stats?.phoneVerificationRate),
-                  'Onboarding complet': pct(stats?.onboardingCompletionRate),
-                  'Credibilite validee': pct(stats?.credibilityVerificationRate),
-                }} />
-              </div>
-              <div className="card p-5">
                 <h2 className="section-title mb-4">Pipeline echanges</h2>
-                <StatusRows values={stats?.exchangesByStatus} />
+                <DistributionChart values={stats?.exchangesByStatus} total={stats?.totalExchanges} />
               </div>
               <div className="card p-5">
                 <h2 className="section-title mb-4">Sante marketplace</h2>
-                <StatusRows values={{
-                  'Annonces totales': stats?.totalListings || 0,
-                  'Annonces actives': stats?.activeListings || 0,
-                  'Annonces echangees': stats?.exchangedListings || 0,
-                  'Actives / utilisateur actif': stats?.activeListingsPerActiveUser || 0,
-                  'QR completion': pct(stats?.qrCompletionRate),
-                  'Temps moyen completion': stats?.averageCompletionHours == null ? 'N/A' : `${stats.averageCompletionHours} h`,
-                }} />
+                <div className="space-y-4">
+                  <ProgressMetric label="Taux de completion echange" value={stats?.exchangeCompletionRate} color="bg-green-500" />
+                  <ProgressMetric label="Taux acceptation" value={stats?.exchangeAcceptanceRate} color="bg-blue-500" />
+                  <ProgressMetric label="Validation QR complete" value={stats?.qrCompletionRate} color="bg-violet-500" />
+                  <div className="rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm text-stone-700">
+                    Temps moyen completion: <span className="font-semibold text-stone-900">{stats?.averageCompletionHours == null ? 'N/A' : `${stats.averageCompletionHours} h`}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="card p-5">
+                <h2 className="section-title mb-4">Activite annonces</h2>
+                <BarRows values={stats?.listingsByStatus} total={stats?.totalListings} />
               </div>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-4">
               <div className="card p-5">
                 <h2 className="section-title mb-4">Utilisateurs par type</h2>
-                <StatusRows values={stats?.usersByType} />
+                <BarRows values={stats?.usersByType} total={stats?.totalUsers} />
               </div>
               <div className="card p-5">
-                <h2 className="section-title mb-4">Annonces par statut</h2>
-                <StatusRows values={stats?.listingsByStatus} />
+                <h2 className="section-title mb-4">Indicateurs de densite</h2>
+                <div className="grid sm:grid-cols-3 gap-3">
+                  <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-3">
+                    <p className="text-xs text-blue-700 font-medium">Annonces totales</p>
+                    <p className="text-xl font-bold text-blue-900">{stats?.totalListings || 0}</p>
+                  </div>
+                  <div className="rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-3">
+                    <p className="text-xs text-emerald-700 font-medium">Annonces actives</p>
+                    <p className="text-xl font-bold text-emerald-900">{stats?.activeListings || 0}</p>
+                  </div>
+                  <div className="rounded-lg border border-amber-100 bg-amber-50 px-3 py-3">
+                    <p className="text-xs text-amber-700 font-medium">Actives / user actif</p>
+                    <p className="text-xl font-bold text-amber-900">{stats?.activeListingsPerActiveUser || 0}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -197,7 +319,11 @@ export default function AdminUsers() {
                         <p>{exchange.requesterName}</p>
                         <p className="text-xs text-stone-400">avec {exchange.providerName}</p>
                       </td>
-                      <td className="px-4 py-3"><span className="badge-stone">{exchange.status}</span></td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${statusClass(exchange.status)}`}>
+                          {exchange.status}
+                        </span>
+                      </td>
                       <td className="px-4 py-3 text-stone-600">
                         {(exchange.requesterQrConfirmed ? 1 : 0) + (exchange.providerQrConfirmed ? 1 : 0)}/2 confirmations
                       </td>

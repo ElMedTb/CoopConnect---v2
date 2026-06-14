@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { notificationsApi } from '../../api/users'
-import { Leaf, Menu, X, ChevronDown, User, LogOut, LayoutDashboard, ListChecks, Sparkles, ArrowLeftRight, Bell, ShieldCheck } from 'lucide-react'
+import { Leaf, Menu, X, ChevronDown, User, LogOut, LayoutDashboard, ListChecks, Bell } from 'lucide-react'
 
 export default function Navbar() {
   const { user, logout, isAuthenticated } = useAuth()
@@ -126,7 +126,6 @@ export default function Navbar() {
                           onClick={() => setUserMenuOpen(false)}
                           className="flex items-center gap-2.5 px-3 py-2 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
                         >
-                          <Sparkles className="w-4 h-4 text-stone-400" />
                           Recommandations
                         </Link>
                         <Link
@@ -134,7 +133,6 @@ export default function Navbar() {
                           onClick={() => setUserMenuOpen(false)}
                           className="flex items-center gap-2.5 px-3 py-2 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
                         >
-                          <ArrowLeftRight className="w-4 h-4 text-stone-400" />
                           Mes échanges
                         </Link>
                         <Link
@@ -164,7 +162,6 @@ export default function Navbar() {
                             onClick={() => setUserMenuOpen(false)}
                             className="flex items-center gap-2.5 px-3 py-2 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
                           >
-                            <ShieldCheck className="w-4 h-4 text-stone-400" />
                             Administration
                           </Link>
                         )}
