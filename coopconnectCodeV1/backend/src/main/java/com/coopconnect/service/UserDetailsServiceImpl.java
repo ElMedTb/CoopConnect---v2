@@ -1,7 +1,6 @@
 package com.coopconnect.service;
 
 import com.coopconnect.domain.model.User;
-import com.coopconnect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,15 +25,14 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final CoreUserProvisioningService userProvisioningService;
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Loading user by username: {}", username);
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        User user = userProvisioningService.getOrCreateByUsername(username);
 
         boolean isLocked = user.getAccountLockedUntil() != null &&
                 user.getAccountLockedUntil().isAfter(LocalDateTime.now());
@@ -53,4 +51,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .disabled(Boolean.FALSE.equals(user.getIsActive()))
                 .build();
     }
+
 }

@@ -16,4 +16,5 @@ export const matchesApi = {
   findForListing: (listingId, params) =>
     client.post(`/matches/listing/${listingId}`, null, { params }),
   getRecommendations: (params) => client.get('/matches/recommendations', { params }),
+  getQuota: () => client.get('/matches/quota'),
 }

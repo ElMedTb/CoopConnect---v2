@@ -50,7 +50,7 @@ export default function Register() {
     try {
       await register(form)
       setSuccess(true)
-      setTimeout(() => navigate('/dashboard'), 1500)
+      setTimeout(() => navigate('/onboarding'), 1500)
     } catch (err) {
       setError(err.response?.data?.message || 'Erreur lors de l\'inscription. Réessayez.')
     } finally {
@@ -67,7 +67,7 @@ export default function Register() {
               <CheckCircle className="w-7 h-7 text-forest-700" />
             </div>
             <h2 className="text-lg font-semibold text-stone-900 mb-2">Compte créé</h2>
-            <p className="text-sm text-stone-500">Redirection vers votre tableau de bord...</p>
+            <p className="text-sm text-stone-500">Redirection vers les informations de profil...</p>
           </div>
         </div>
       </div>

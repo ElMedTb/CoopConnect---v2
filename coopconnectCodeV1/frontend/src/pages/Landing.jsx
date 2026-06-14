@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Leaf, ArrowRight, RefreshCw, MapPin, ShieldCheck, Sparkles, Package } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
 function MockListing() {
   return (
@@ -79,6 +80,8 @@ function StepItem({ number, title, description }) {
 }
 
 export default function Landing() {
+  const { isAuthenticated, user } = useAuth()
+
   return (
     <div className="min-h-screen bg-stone-100">
       {/* Header */}
@@ -90,14 +93,26 @@ export default function Landing() {
             </div>
             <span className="font-semibold text-stone-900">CoopConnect</span>
           </div>
-          <div className="flex items-center gap-4">
-            <Link to="/login" className="text-sm text-stone-600 hover:text-stone-900 font-medium transition-colors">
-              Connexion
-            </Link>
-            <Link to="/register" className="btn-primary text-xs px-3 py-1.5">
-              Commencer gratuitement
-            </Link>
-          </div>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:inline text-sm text-stone-600">{user?.fullName || user?.username}</span>
+              <Link to="/dashboard" className="text-sm text-stone-600 hover:text-stone-900 font-medium transition-colors">
+                Tableau de bord
+              </Link>
+              <Link to="/listings/create" className="btn-primary text-xs px-3 py-1.5">
+                Publier
+              </Link>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <Link to="/login" className="text-sm text-stone-600 hover:text-stone-900 font-medium transition-colors">
+                Connexion
+              </Link>
+              <Link to="/register" className="btn-primary text-xs px-3 py-1.5">
+                Commencer gratuitement
+              </Link>
+            </div>
+          )}
         </div>
       </header>
 
@@ -133,8 +148,8 @@ export default function Landing() {
               leurs ressources, réduire le gaspillage et développer des partenariats durables.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <Link to="/register" className="btn-primary px-6 py-3 text-sm">
-                Rejoindre la plateforme
+              <Link to={isAuthenticated ? '/dashboard' : '/register'} className="btn-primary px-6 py-3 text-sm">
+                {isAuthenticated ? 'Aller au tableau de bord' : 'Rejoindre la plateforme'}
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link to="/browse" className="btn-secondary px-6 py-3 text-sm">
@@ -247,8 +262,8 @@ export default function Landing() {
             Rejoignez des milliers d'acteurs économiques marocains qui coopèrent
             grâce à CoopConnect.
           </p>
-          <Link to="/register" className="inline-flex items-center gap-2 bg-white text-forest-800 font-semibold px-6 py-3 rounded-lg text-sm hover:bg-forest-50 transition-colors">
-            Créer mon compte gratuitement
+          <Link to={isAuthenticated ? '/dashboard' : '/register'} className="inline-flex items-center gap-2 bg-white text-forest-800 font-semibold px-6 py-3 rounded-lg text-sm hover:bg-forest-50 transition-colors">
+            {isAuthenticated ? 'Ouvrir mon espace' : 'Créer mon compte gratuitement'}
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

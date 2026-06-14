@@ -1,5 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Navigation, MapPin } from 'lucide-react'
+import { Navigation, MapPin, Search } from 'lucide-react'
+
+async function geocodeAddress(query) {
+  const res = await fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&accept-language=fr`
+  )
+  const data = await res.json()
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error('Adresse introuvable')
+  }
+  return {
+    lat: Number(data[0].lat),
+    lng: Number(data[0].lon),
+    text: data[0].display_name,
+  }
+}
 
 async function reverseGeocode(lat, lng) {
   try {
@@ -25,6 +40,9 @@ export default function LocationPicker({ latitude, longitude, locationText, onCh
   const placeRef = useRef(null)
   const onChangeRef = useRef(onChange)
   const [locating, setLocating] = useState(false)
+  const [addressQuery, setAddressQuery] = useState(locationText || '')
+  const [searching, setSearching] = useState(false)
+  const [searchError, setSearchError] = useState('')
 
   useEffect(() => { onChangeRef.current = onChange }, [onChange])
 
@@ -100,6 +118,25 @@ export default function LocationPicker({ latitude, longitude, locationText, onCh
     )
   }
 
+  const handleAddressSearch = async () => {
+    if (!addressQuery.trim() || !mapInstanceRef.current) return
+    setSearching(true)
+    setSearchError('')
+    try {
+      const result = await geocodeAddress(addressQuery.trim())
+      mapInstanceRef.current.map.flyTo([result.lat, result.lng], 15, { duration: 1 })
+      if (placeRef.current) {
+        await placeRef.current(result.lat, result.lng)
+      } else {
+        onChangeRef.current({ latitude: result.lat, longitude: result.lng, locationText: result.text })
+      }
+    } catch {
+      setSearchError('Adresse introuvable. Essayez avec ville, quartier et pays.')
+    } finally {
+      setSearching(false)
+    }
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
@@ -117,6 +154,18 @@ export default function LocationPicker({ latitude, longitude, locationText, onCh
       <p className="text-xs text-stone-500 mb-2">
         Cliquez sur la carte pour définir l'emplacement, ou faites glisser le marqueur.
       </p>
+      <div className="flex gap-2 mb-2">
+        <input
+          className="input flex-1 text-sm"
+          value={addressQuery}
+          onChange={e => { setAddressQuery(e.target.value); setSearchError('') }}
+          placeholder="Adresse, quartier, ville..."
+        />
+        <button type="button" onClick={handleAddressSearch} disabled={searching || !addressQuery.trim()} className="btn-secondary px-3" aria-label="Rechercher l'adresse">
+          <Search className="w-4 h-4" />
+        </button>
+      </div>
+      {searchError && <p className="text-xs text-red-600 mb-2">{searchError}</p>}
       <div ref={mapRef} className="h-52 w-full rounded-xl border border-stone-200 overflow-hidden" />
       <p className="text-xs mt-1.5 flex items-center gap-1">
         {locationText ? (

@@ -75,6 +75,12 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "phone_verified", nullable = false)
     private Boolean phoneVerified = false;
 
+    @Column(name = "phone_verification_code", length = 10)
+    private String phoneVerificationCode;
+
+    @Column(name = "phone_verification_expires_at")
+    private LocalDateTime phoneVerificationExpiresAt;
+
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
@@ -159,6 +165,6 @@ public class User extends BaseEntity implements UserDetails {
                 && (status == UserStatus.ACTIVE || status == UserStatus.PENDING_VERIFICATION);
     }
 
-    public enum UserType { INDIVIDUAL, PROFESSIONAL, BUSINESS, NON_PROFIT }
+    public enum UserType { INDIVIDUAL, PROFESSIONAL, BUSINESS, NON_PROFIT, ADMIN }
     public enum UserStatus { PENDING_VERIFICATION, ACTIVE, SUSPENDED, DEACTIVATED, BANNED }
 }

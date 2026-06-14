@@ -7,7 +7,7 @@ spring:
       # CORS global — le frontend (5173) parle uniquement au gateway (8080)
       globalcors:
         corsConfigurations:
-          '[/**]':
+          "[/**]":
             allowedOriginPatterns:
               - "http://localhost:3000"
               - "http://localhost:5173"
@@ -68,7 +68,7 @@ spring:
             - Path=/docs,/redoc,/openapi.json
 
 server:
-  port: 8080
+  port: 8090
 
 eureka:
   client:

@@ -3,6 +3,10 @@ import re
 import logging
 from typing import Optional
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 logger = logging.getLogger(__name__)
 
 _price_cache: dict[str, float] = {}
@@ -20,7 +24,8 @@ def _get_client():
         if not api_key:
             return None
         genai.configure(api_key=api_key)
-        _gemini_client = genai.GenerativeModel("gemini-2.5-flash")
+        model_name = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
+        _gemini_client = genai.GenerativeModel(model_name)
     except Exception as e:
         logger.warning(f"Gemini client init failed: {e}")
         _gemini_client = None

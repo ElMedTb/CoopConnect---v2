@@ -22,6 +22,7 @@ public class ListingService {
 
     private final ListingRepository listingRepository;
     private final UserRepository userRepository;
+    private final CoreUserProvisioningService userProvisioningService;
 
     @Transactional(readOnly = true)
     public Page<ListingResponse> getAllActiveListings(Pageable pageable) {
@@ -52,8 +53,7 @@ public class ListingService {
 
     @Transactional
     public ListingResponse createListing(CreateListingRequest request, String username) {
-        User owner = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User owner = userProvisioningService.getOrCreateByUsername(username);
 
         Listing listing = Listing.builder()
                 .title(request.getTitle())
@@ -124,10 +124,9 @@ public class ListingService {
         log.info("Listing soft-deleted: {}", id);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Page<ListingResponse> getMyListings(String username, Pageable pageable) {
-        User owner = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User owner = userProvisioningService.getOrCreateByUsername(username);
         return listingRepository.findByOwnerId(owner.getId(), pageable).map(ListingResponse::fromEntity);
     }
 

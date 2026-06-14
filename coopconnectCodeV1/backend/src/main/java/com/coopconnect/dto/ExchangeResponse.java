@@ -24,6 +24,16 @@ public class ExchangeResponse {
 
     private String listingId;
     private String listingTitle;
+    private String offeredListingId;
+    private String offeredListingTitle;
+
+    private String requesterQrPayload;
+    private String providerQrPayload;
+    private Boolean requesterQrConfirmed;
+    private Boolean providerQrConfirmed;
+    private LocalDateTime requesterQrConfirmedAt;
+    private LocalDateTime providerQrConfirmedAt;
+    private LocalDateTime completionConfirmedAt;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -44,8 +54,27 @@ public class ExchangeResponse {
                 .providerUsername(e.getProvider().getUsername())
                 .listingId(e.getListing().getId().toString())
                 .listingTitle(e.getListing().getTitle())
+                .offeredListingId(e.getOfferedListing() != null ? e.getOfferedListing().getId().toString() : null)
+                .offeredListingTitle(e.getOfferedListing() != null ? e.getOfferedListing().getTitle() : null)
+                .requesterQrPayload(buildQrPayload(e, true))
+                .providerQrPayload(buildQrPayload(e, false))
+                .requesterQrConfirmed(e.getRequesterQrConfirmed())
+                .providerQrConfirmed(e.getProviderQrConfirmed())
+                .requesterQrConfirmedAt(e.getRequesterQrConfirmedAt())
+                .providerQrConfirmedAt(e.getProviderQrConfirmedAt())
+                .completionConfirmedAt(e.getCompletionConfirmedAt())
                 .createdAt(e.getCreatedAt())
                 .updatedAt(e.getUpdatedAt())
                 .build();
+    }
+
+    private static String buildQrPayload(Exchange e, boolean requesterSide) {
+        String token = requesterSide ? e.getRequesterQrToken() : e.getProviderQrToken();
+        if (token == null || e.getId() == null) return null;
+        String listingId = requesterSide && e.getOfferedListing() != null
+                ? e.getOfferedListing().getId().toString()
+                : e.getListing().getId().toString();
+        String side = requesterSide ? "REQUESTER" : "PROVIDER";
+        return "CCQR:" + e.getId() + ":" + listingId + ":" + side + ":" + token;
     }
 }

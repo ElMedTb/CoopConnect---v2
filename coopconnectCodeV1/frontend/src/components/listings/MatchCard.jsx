@@ -44,7 +44,7 @@ export function normalizeMatch(m) {
   }
 }
 
-export default function MatchCard({ match: rawMatch, showExchange = false, myListingTitle = '' }) {
+export default function MatchCard({ match: rawMatch, showExchange = false, myListingTitle = '', myListingId = '' }) {
   const match = normalizeMatch(rawMatch)
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
@@ -65,7 +65,7 @@ export default function MatchCard({ match: rawMatch, showExchange = false, myLis
       const message = myListingTitle
         ? `Bonjour, je souhaite échanger "${myListingTitle}" contre votre annonce.`
         : "Bonjour, votre annonce m'intéresse, souhaitez-vous échanger ?"
-      await exchangesApi.create({ listingId: match.listingId, message })
+      await exchangesApi.create({ listingId: match.listingId, offeredListingId: myListingId || undefined, message })
       setSent(true)
     } catch (err) {
       setExchangeError(err.response?.data?.message || "Erreur lors de la demande d'échange.")
@@ -116,6 +116,7 @@ export default function MatchCard({ match: rawMatch, showExchange = false, myLis
               {match.listingId && (
                 <Link
                   to={`/listings/${match.listingId}`}
+                  state={{ backTo: '/matches', backLabel: 'Retour aux recommandations' }}
                   className="inline-flex items-center gap-1.5 text-xs font-medium text-forest-700 hover:text-forest-900 transition-colors"
                 >
                   <TrendingUp className="w-3.5 h-3.5" aria-hidden="true" />

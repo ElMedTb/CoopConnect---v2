@@ -73,6 +73,15 @@ public class ExchangeController {
         return ResponseEntity.ok(exchangeService.cancel(auth.getName(), id));
     }
 
+    @PostMapping("/{id}/scan-qr")
+    @Operation(summary = "Validate an exchange QR code")
+    public ResponseEntity<ExchangeResponse> scanQr(
+            Authentication auth,
+            @PathVariable UUID id,
+            @RequestBody Map<String, String> body) {
+        return ResponseEntity.ok(exchangeService.scanQr(auth.getName(), id, body.get("payload")));
+    }
+
     @GetMapping("/{id}/messages")
     @Operation(summary = "Get messages for an exchange (chat)")
     public ResponseEntity<List<MessageResponse>> getMessages(

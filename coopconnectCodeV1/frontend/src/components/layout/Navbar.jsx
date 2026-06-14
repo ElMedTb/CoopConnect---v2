@@ -1,26 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { exchangesApi } from '../../api/users'
-import { Leaf, Menu, X, ChevronDown, User, LogOut, LayoutDashboard, ListChecks, Sparkles, ArrowLeftRight, Map } from 'lucide-react'
+import { notificationsApi } from '../../api/users'
+import { Leaf, Menu, X, ChevronDown, User, LogOut, LayoutDashboard, ListChecks, Sparkles, ArrowLeftRight, Bell, ShieldCheck } from 'lucide-react'
 
 export default function Navbar() {
   const { user, logout, isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const [pendingCount, setPendingCount] = useState(0)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     if (!isAuthenticated) return
     const load = () => {
-      exchangesApi.getMy()
-        .then(res => {
-          const pending = (res.data || []).filter(
-            e => e.status === 'REQUESTED' && e.providerUsername === user?.username
-          ).length
-          setPendingCount(pending)
-        })
+      notificationsApi.unreadCount()
+        .then(res => setUnreadCount(res.data?.count || 0))
         .catch(() => {})
     }
     load()
@@ -58,6 +53,7 @@ export default function Navbar() {
               <>
                 <NavLink to="/dashboard" className={navLinkClass}>Tableau de bord</NavLink>
                 <NavLink to="/matches" className={navLinkClass}>Mes matchs</NavLink>
+                {user?.role === 'ADMIN' && <NavLink to="/admin/users" className={navLinkClass}>Admin</NavLink>}
               </>
             )}
           </nav>
@@ -71,6 +67,19 @@ export default function Navbar() {
                   className="hidden sm:inline-flex btn-primary text-xs px-3 py-1.5"
                 >
                   Publier une annonce
+                </Link>
+
+                <Link
+                  to="/notifications"
+                  className="relative btn-ghost p-1.5"
+                  aria-label="Notifications"
+                >
+                  <Bell className="w-4 h-4" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-4 h-4 rounded-full bg-amber-500 text-white text-[10px] leading-4 text-center px-1">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
                 </Link>
 
                 <div className="relative">
@@ -127,9 +136,17 @@ export default function Navbar() {
                         >
                           <ArrowLeftRight className="w-4 h-4 text-stone-400" />
                           Mes échanges
-                          {pendingCount > 0 && (
+                        </Link>
+                        <Link
+                          to="/notifications"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                        >
+                          <Bell className="w-4 h-4 text-stone-400" />
+                          Notifications
+                          {unreadCount > 0 && (
                             <span className="ml-auto text-xs bg-amber-100 text-amber-800 font-medium px-1.5 py-0.5 rounded-full">
-                              {pendingCount}
+                              {unreadCount}
                             </span>
                           )}
                         </Link>
@@ -141,6 +158,16 @@ export default function Navbar() {
                           <User className="w-4 h-4 text-stone-400" />
                           Mon profil
                         </Link>
+                        {user?.role === 'ADMIN' && (
+                          <Link
+                            to="/admin/users"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-3 py-2 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                          >
+                            <ShieldCheck className="w-4 h-4 text-stone-400" />
+                            Administration
+                          </Link>
+                        )}
                         <div className="border-t border-stone-100 mt-1">
                           <button
                             onClick={handleLogout}
@@ -219,6 +246,26 @@ export default function Navbar() {
               >
                 Mes matchs
               </NavLink>
+              <NavLink
+                to="/notifications"
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) =>
+                  `block px-3 py-2 rounded-lg text-sm font-medium ${isActive ? 'bg-forest-50 text-forest-800' : 'text-stone-700 hover:bg-stone-50'}`
+                }
+              >
+                Notifications{unreadCount > 0 ? ` (${unreadCount})` : ''}
+              </NavLink>
+              {user?.role === 'ADMIN' && (
+                <NavLink
+                  to="/admin/users"
+                  onClick={() => setMobileOpen(false)}
+                  className={({ isActive }) =>
+                    `block px-3 py-2 rounded-lg text-sm font-medium ${isActive ? 'bg-forest-50 text-forest-800' : 'text-stone-700 hover:bg-stone-50'}`
+                  }
+                >
+                  Administration
+                </NavLink>
+              )}
               <Link
                 to="/listings/create"
                 onClick={() => setMobileOpen(false)}

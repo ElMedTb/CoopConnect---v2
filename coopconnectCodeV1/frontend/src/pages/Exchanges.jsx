@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { exchangesApi } from '../api/users'
 import {
   ArrowLeft, MessageSquare, CheckCircle, XCircle, Clock,
-  Send, ChevronRight, ArrowRight
+  Send, ChevronRight, ArrowRight, QrCode
 } from 'lucide-react'
 
 const STATUS_CONFIG = {
@@ -26,6 +26,16 @@ function timeAgo(dateStr) {
   const hours = Math.floor(minutes / 60)
   if (hours < 24) return `Il y a ${hours}h`
   return `Il y a ${Math.floor(hours / 24)}j`
+}
+
+function extractQrPayload(value) {
+  if (!value) return ''
+  try {
+    const url = new URL(value)
+    return url.searchParams.get('scan') || value
+  } catch {
+    return value
+  }
 }
 
 function Chat({ exchange, currentUsername }) {
@@ -98,6 +108,133 @@ function Chat({ exchange, currentUsername }) {
   )
 }
 
+function QrValidationPanel({ exchange, currentUsername, onAction }) {
+  const [searchParams] = useSearchParams()
+  const [payload, setPayload] = useState('')
+  const [scanError, setScanError] = useState('')
+  const [scanning, setScanning] = useState(false)
+  const [cameraOpen, setCameraOpen] = useState(false)
+  const scannerRef = useRef(null)
+  const scannerIdRef = useRef(`qr-reader-${exchange.id}`)
+  const isRequester = exchange.requesterUsername === currentUsername
+  const myPayload = isRequester ? exchange.requesterQrPayload : exchange.providerQrPayload
+  const otherSideScannedMe = isRequester ? exchange.providerQrConfirmed : exchange.requesterQrConfirmed
+  const iScannedOtherSide = isRequester ? exchange.requesterQrConfirmed : exchange.providerQrConfirmed
+  const canUseQr = ['ACCEPTED', 'IN_PROGRESS', 'COMPLETED'].includes(exchange.status)
+
+  useEffect(() => {
+    const exchangeParam = searchParams.get('exchange')
+    const scanParam = searchParams.get('scan')
+    if (canUseQr && myPayload && exchangeParam === exchange.id && scanParam) {
+      setPayload(extractQrPayload(scanParam))
+    }
+  }, [canUseQr, exchange.id, myPayload, searchParams])
+
+  const publicBaseUrl = import.meta.env.VITE_PUBLIC_APP_URL || window.location.origin
+  const qrLink = `${publicBaseUrl}/exchanges?exchange=${encodeURIComponent(exchange.id)}&scan=${encodeURIComponent(myPayload)}`
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrLink)}`
+
+  const stopCamera = () => {
+    scannerRef.current?.stop().catch(() => {})
+    scannerRef.current = null
+    setCameraOpen(false)
+  }
+
+  useEffect(() => stopCamera, [])
+
+  if (!canUseQr || !myPayload) return null
+
+  const startCameraScan = async () => {
+    setScanError('')
+    try {
+      setCameraOpen(true)
+      const { Html5Qrcode } = await import('html5-qrcode')
+      const scanner = new Html5Qrcode(scannerIdRef.current)
+      scannerRef.current = scanner
+      await scanner.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: { width: 240, height: 240 } },
+        decoded => {
+          setPayload(extractQrPayload(decoded))
+          stopCamera()
+        },
+        () => {}
+      )
+    } catch {
+      setScanError('Impossible d ouvrir la camera. Verifiez les permissions du navigateur.')
+      stopCamera()
+    }
+  }
+
+  const submitScan = async () => {
+    if (!payload.trim()) return
+    setScanning(true)
+    setScanError('')
+    try {
+      await exchangesApi.scanQr(exchange.id, extractQrPayload(payload.trim()))
+      setPayload('')
+      onAction()
+    } catch (err) {
+      setScanError(err.response?.data?.message || 'QR code invalide.')
+    } finally {
+      setScanning(false)
+    }
+  }
+
+  return (
+    <div className="border border-stone-200 rounded-xl p-4 bg-white">
+      <p className="text-xs font-semibold text-stone-700 flex items-center gap-1.5 mb-3">
+        <QrCode className="w-3.5 h-3.5" /> Validation QR
+      </p>
+      <div className="grid sm:grid-cols-[180px_1fr] gap-4">
+        <div>
+          <img src={qrUrl} alt="QR code de validation" className="w-40 h-40 border border-stone-200 rounded-lg" />
+          <p className="text-xs text-stone-500 mt-2">A montrer a l'autre participant.</p>
+        </div>
+        <div className="space-y-3">
+          <div className="flex flex-wrap gap-2 text-xs">
+            <span className={iScannedOtherSide ? 'badge-green' : 'badge-amber'}>Votre scan: {iScannedOtherSide ? 'fait' : 'en attente'}</span>
+            <span className={otherSideScannedMe ? 'badge-green' : 'badge-amber'}>Scan recu: {otherSideScannedMe ? 'fait' : 'en attente'}</span>
+          </div>
+          <textarea
+            className="input w-full text-sm"
+            rows={3}
+            placeholder="Collez ici le contenu du QR code scanne..."
+            value={payload}
+            onChange={e => { setPayload(e.target.value); setScanError('') }}
+            disabled={exchange.status === 'COMPLETED'}
+          />
+          {cameraOpen && (
+            <div id={scannerIdRef.current} className="w-full rounded-lg overflow-hidden bg-stone-900" />
+          )}
+          {scanError && <p className="text-xs text-red-600">{scanError}</p>}
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={startCameraScan}
+              disabled={exchange.status === 'COMPLETED' || cameraOpen}
+              className="btn-secondary text-sm"
+            >
+              Scanner avec la camera
+            </button>
+            {cameraOpen && (
+              <button onClick={stopCamera} className="btn-secondary text-sm">
+                Fermer la camera
+              </button>
+            )}
+            <button
+              onClick={submitScan}
+              disabled={scanning || !payload.trim() || exchange.status === 'COMPLETED'}
+              className="btn-primary text-sm"
+            >
+              {exchange.status === 'COMPLETED' ? 'Echange termine' : scanning ? 'Validation...' : 'Valider le QR'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ExchangeCard({ exchange, currentUsername, onAction }) {
   const [open, setOpen] = useState(false)
   const [responding, setResponding] = useState(false)
@@ -109,7 +246,7 @@ function ExchangeCard({ exchange, currentUsername, onAction }) {
   const isRequester = exchange.requesterUsername === currentUsername
   const conf = STATUS_CONFIG[exchange.status] || { label: exchange.status, color: 'badge-stone' }
   const canAct = isProvider && exchange.status === 'REQUESTED'
-  const canCancel = exchange.status === 'REQUESTED' && (isRequester || isProvider)
+  const canCancel = ['REQUESTED', 'ACCEPTED', 'IN_PROGRESS'].includes(exchange.status) && (isRequester || isProvider)
 
   const handleAccept = async () => {
     setResponding(true)
@@ -219,6 +356,8 @@ function ExchangeCard({ exchange, currentUsername, onAction }) {
               Réponse : "{exchange.responseMessage}"
             </div>
           )}
+
+          <QrValidationPanel exchange={exchange} currentUsername={currentUsername} onAction={onAction} />
 
           {/* Chat */}
           <div>

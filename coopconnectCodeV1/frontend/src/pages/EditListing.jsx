@@ -73,6 +73,8 @@ export default function EditListing() {
     if (!form.description || form.description.length < 20) { setError('Description trop courte (min. 20 caractères).'); return }
     if (!form.category) { setError('Veuillez choisir une catégorie.'); return }
 
+    if (!form.locationText || !form.latitude || !form.longitude) { setError('Veuillez renseigner une adresse ou choisir un point sur la carte.'); return }
+
     setSaving(true)
     setError('')
     try {

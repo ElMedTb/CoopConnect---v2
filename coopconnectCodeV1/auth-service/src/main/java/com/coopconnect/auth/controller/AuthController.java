@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -32,6 +34,12 @@ public class AuthController {
         return ResponseEntity.ok(authService.authenticate(req));
     }
 
+    @PostMapping("/google")
+    @Operation(summary = "Authenticate user with Google Identity")
+    public ResponseEntity<AuthResponse> google(@RequestBody Map<String, String> body) {
+        return ResponseEntity.ok(authService.authenticateWithGoogle(body.get("credential")));
+    }
+
     @PostMapping("/refresh")
     @Operation(summary = "Refresh JWT token")
     public ResponseEntity<AuthResponse> refresh(@RequestHeader("Refresh-Token") String token) {
@@ -49,6 +57,34 @@ public class AuthController {
     public ResponseEntity<String> verifyEmail(@RequestParam String token) {
         authService.verifyEmail(token);
         return ResponseEntity.ok("Email verified");
+    }
+
+    @PostMapping("/email/send-verification")
+    public ResponseEntity<String> sendEmailVerification(@RequestBody Map<String, String> body) {
+        authService.requestEmailVerification(body.get("usernameOrEmail"));
+        return ResponseEntity.ok("Verification email sent");
+    }
+
+    @PostMapping("/phone/send-code")
+    public ResponseEntity<String> sendPhoneCode(@RequestBody Map<String, String> body) {
+        authService.requestPhoneVerification(body.get("username"), body.get("phoneNumber"));
+        return ResponseEntity.ok("Phone verification code sent");
+    }
+
+    @PostMapping("/phone/verify-code")
+    public ResponseEntity<String> verifyPhoneCode(@RequestBody Map<String, String> body) {
+        authService.verifyPhone(body.get("username"), body.get("phoneNumber"), body.get("code"));
+        return ResponseEntity.ok("Phone verified");
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody Map<String, String> body) {
+        authService.changePassword(
+                body.get("username"),
+                body.get("currentPassword"),
+                body.get("newPassword")
+        );
+        return ResponseEntity.ok("Password changed");
     }
 
     @PostMapping("/forgot-password")

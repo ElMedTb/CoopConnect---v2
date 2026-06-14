@@ -16,6 +16,9 @@ import Profile from './pages/Profile'
 import Exchanges from './pages/Exchanges'
 import EditListing from './pages/EditListing'
 import MapView from './pages/MapView'
+import Onboarding from './pages/Onboarding'
+import Notifications from './pages/Notifications'
+import AdminUsers from './pages/AdminUsers'
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, loading } = useAuth()
@@ -25,6 +28,12 @@ function PrivateRoute({ children }) {
     </div>
   )
   return isAuthenticated ? children : <Navigate to="/login" replace />
+}
+
+function AdminRoute({ children }) {
+  const { user, isAuthenticated, loading } = useAuth()
+  if (loading) return null
+  return isAuthenticated && user?.role === 'ADMIN' ? children : <Navigate to="/dashboard" replace />
 }
 
 function PublicRoute({ children }) {
@@ -54,12 +63,15 @@ function AppRoutes() {
       <Route path="/listings/:id" element={<WithNav><ListingDetail /></WithNav>} />
 
       <Route path="/dashboard" element={<PrivateRoute><WithNav><Dashboard /></WithNav></PrivateRoute>} />
+      <Route path="/onboarding" element={<PrivateRoute><WithNav><Onboarding /></WithNav></PrivateRoute>} />
       <Route path="/listings/create" element={<PrivateRoute><WithNav><CreateListing /></WithNav></PrivateRoute>} />
       <Route path="/listings/my" element={<PrivateRoute><WithNav><MyListings /></WithNav></PrivateRoute>} />
       <Route path="/listings/:id/edit" element={<PrivateRoute><WithNav><EditListing /></WithNav></PrivateRoute>} />
       <Route path="/matches" element={<PrivateRoute><WithNav><Matches /></WithNav></PrivateRoute>} />
       <Route path="/profile" element={<PrivateRoute><WithNav><Profile /></WithNav></PrivateRoute>} />
       <Route path="/exchanges" element={<PrivateRoute><WithNav><Exchanges /></WithNav></PrivateRoute>} />
+      <Route path="/notifications" element={<PrivateRoute><WithNav><Notifications /></WithNav></PrivateRoute>} />
+      <Route path="/admin/users" element={<AdminRoute><WithNav><AdminUsers /></WithNav></AdminRoute>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

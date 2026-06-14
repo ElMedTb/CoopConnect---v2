@@ -1,10 +1,7 @@
 import math
 import re
+from collections import Counter
 from typing import Optional
-
-import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
 from app.models import ListingInput, MatchResult, ScoreBreakdown, ExchangeIntent
 from app.price_estimator import estimate_price, price_proximity_score
@@ -43,6 +40,48 @@ def _build_text(listing: ListingInput) -> str:
     if listing.subcategory:
         parts.append(listing.subcategory)
     return _preprocess_text(" ".join(parts))
+
+
+def _tokens_with_bigrams(text: str) -> list[str]:
+    tokens = text.split()
+    bigrams = [f"{tokens[i]} {tokens[i + 1]}" for i in range(len(tokens) - 1)]
+    return tokens + bigrams
+
+
+def _tfidf_cosine_scores(query_text: str, candidate_texts: list[str]) -> list[float]:
+    documents = [query_text] + candidate_texts
+    tokenized = [_tokens_with_bigrams(doc) for doc in documents]
+    doc_count = len(tokenized)
+
+    document_frequency: Counter[str] = Counter()
+    for tokens in tokenized:
+        document_frequency.update(set(tokens))
+
+    def vector(tokens: list[str]) -> dict[str, float]:
+        if not tokens:
+            return {}
+        counts = Counter(tokens)
+        total = len(tokens)
+        values: dict[str, float] = {}
+        for term, count in counts.items():
+            tf = count / total
+            idf = math.log((1 + doc_count) / (1 + document_frequency[term])) + 1
+            values[term] = tf * idf
+        return values
+
+    def cosine(a: dict[str, float], b: dict[str, float]) -> float:
+        if not a or not b:
+            return 0.0
+        common_terms = set(a).intersection(b)
+        dot = sum(a[term] * b[term] for term in common_terms)
+        norm_a = math.sqrt(sum(value * value for value in a.values()))
+        norm_b = math.sqrt(sum(value * value for value in b.values()))
+        if norm_a == 0 or norm_b == 0:
+            return 0.0
+        return dot / (norm_a * norm_b)
+
+    query_vector = vector(tokenized[0])
+    return [cosine(query_vector, vector(tokens)) for tokens in tokenized[1:]]
 
 
 def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -158,20 +197,10 @@ def compute_matches(
     query_text = _build_text(query)
     candidate_texts = [_build_text(c) for c in candidates]
 
-    all_texts = [query_text] + candidate_texts
-    vectorizer = TfidfVectorizer(
-        ngram_range=(1, 2),
-        min_df=1,
-        max_features=5000,
-        sublinear_tf=True,
-    )
     try:
-        tfidf_matrix = vectorizer.fit_transform(all_texts)
-        query_vec = tfidf_matrix[0:1]
-        candidate_vecs = tfidf_matrix[1:]
-        content_scores = cosine_similarity(query_vec, candidate_vecs)[0]
+        content_scores = _tfidf_cosine_scores(query_text, candidate_texts)
     except Exception:
-        content_scores = np.zeros(len(candidates))
+        content_scores = [0.0] * len(candidates)
 
     query_price = _get_price(query)
 

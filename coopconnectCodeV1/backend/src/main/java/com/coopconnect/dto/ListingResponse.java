@@ -35,6 +35,8 @@ public class ListingResponse {
     private String ownerUsername;
     private String ownerName;
     private String ownerId;
+    private String ownerEmail;
+    private String ownerPhoneNumber;
     private Double ownerTrustScore;
     private Boolean isNegotiable;
     private Integer deliveryRadiusKm;
@@ -68,6 +70,8 @@ public class ListingResponse {
                 .ownerUsername(listing.getOwner() != null ? listing.getOwner().getUsername() : null)
                 .ownerName(ownerName)
                 .ownerId(listing.getOwner() != null ? listing.getOwner().getId().toString() : null)
+                .ownerEmail(listing.getOwner() != null ? listing.getOwner().getEmail() : null)
+                .ownerPhoneNumber(listing.getOwner() != null ? listing.getOwner().getPhoneNumber() : null)
                 .ownerTrustScore(listing.getOwner() != null ? listing.getOwner().getTrustScore() : null)
                 .createdAt(listing.getCreatedAt())
                 .updatedAt(listing.getUpdatedAt())

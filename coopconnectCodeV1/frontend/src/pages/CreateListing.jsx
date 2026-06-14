@@ -66,6 +66,10 @@ export default function CreateListing() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!form.locationText || !form.latitude || !form.longitude) {
+      setError('Veuillez renseigner une adresse ou choisir un point sur la carte.')
+      return
+    }
     setLoading(true)
     setError('')
     try {

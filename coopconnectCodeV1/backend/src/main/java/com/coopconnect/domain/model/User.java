@@ -148,6 +148,46 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "verification_level", nullable = false)
     private Integer verificationLevel = 0;
 
+    @Column(name = "onboarding_completed", nullable = false)
+    private Boolean onboardingCompleted = false;
+
+    @Column(name = "organization_name", length = 200)
+    private String organizationName;
+
+    @Column(name = "registration_number", length = 100)
+    private String registrationNumber;
+
+    @Column(name = "ice", length = 100)
+    private String ice;
+
+    @Column(name = "business_sector", length = 150)
+    private String businessSector;
+
+    @Column(name = "credibility_notes", length = 1000)
+    private String credibilityNotes;
+
+    @Column(name = "credibility_verified", nullable = false)
+    private Boolean credibilityVerified = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "subscription_plan", nullable = false)
+    private SubscriptionPlan subscriptionPlan = SubscriptionPlan.STANDARD;
+
+    @Column(name = "premium_activated_at")
+    private LocalDateTime premiumActivatedAt;
+
+    @Column(name = "premium_expires_at")
+    private LocalDateTime premiumExpiresAt;
+
+    @Column(name = "matching_monthly_quota", nullable = false)
+    private Integer matchingMonthlyQuota = 3;
+
+    @Column(name = "matching_usage_month", length = 7)
+    private String matchingUsageMonth;
+
+    @Column(name = "matching_usage_count", nullable = false)
+    private Integer matchingUsageCount = 0;
+
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Listing> listings;
 
@@ -187,7 +227,7 @@ public class User extends BaseEntity implements UserDetails {
      * Enum for user types
      */
     public enum UserType {
-        INDIVIDUAL, PROFESSIONAL, BUSINESS, NON_PROFIT
+        INDIVIDUAL, PROFESSIONAL, BUSINESS, NON_PROFIT, ADMIN
     }
 
     /**
@@ -195,5 +235,9 @@ public class User extends BaseEntity implements UserDetails {
      */
     public enum UserStatus {
         PENDING_VERIFICATION, ACTIVE, SUSPENDED, DEACTIVATED, BANNED
+    }
+
+    public enum SubscriptionPlan {
+        STANDARD, PREMIUM
     }
 }

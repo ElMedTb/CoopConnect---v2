@@ -1,6 +1,7 @@
 package com.coopconnect.controller;
 
 import com.coopconnect.dto.MatchingResponse;
+import com.coopconnect.dto.MatchingQuotaResponse;
 import com.coopconnect.service.MatchingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,11 @@ public class MatchingController {
 
     @PostMapping("/listing/{listingId}")
     public ResponseEntity<MatchingResponse> findMatchesForListing(
+            Authentication auth,
             @PathVariable UUID listingId,
             @RequestParam(defaultValue = "10") int maxResults,
             @RequestParam(defaultValue = "100") double maxDistanceKm) {
-        return ResponseEntity.ok(matchingService.findMatchesForListing(listingId, maxResults, maxDistanceKm));
+        return ResponseEntity.ok(matchingService.findMatchesForListing(auth.getName(), listingId, maxResults, maxDistanceKm));
     }
 
     @GetMapping("/recommendations")
@@ -36,5 +38,10 @@ public class MatchingController {
                 auth.getName(),
                 categories != null ? categories : List.of(),
                 lat, lon, maxResults));
+    }
+
+    @GetMapping("/quota")
+    public ResponseEntity<MatchingQuotaResponse> getQuota(Authentication auth) {
+        return ResponseEntity.ok(matchingService.getQuota(auth.getName()));
     }
 }

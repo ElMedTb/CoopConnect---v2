@@ -81,6 +81,7 @@ export default function Profile() {
     setSaving(true)
     try {
       await usersApi.changePassword({
+        username: user?.username,
         currentPassword: pwdForm.currentPassword,
         newPassword: pwdForm.newPassword,
       })

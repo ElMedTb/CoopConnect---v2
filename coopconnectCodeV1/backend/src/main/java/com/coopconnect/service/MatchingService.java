@@ -1,9 +1,12 @@
 package com.coopconnect.service;
 
 import com.coopconnect.domain.model.Listing;
+import com.coopconnect.domain.model.User;
+import com.coopconnect.dto.MatchingQuotaResponse;
 import com.coopconnect.dto.MatchingRequest;
 import com.coopconnect.dto.MatchingResponse;
 import com.coopconnect.repository.ListingRepository;
+import com.coopconnect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,17 +30,24 @@ import java.util.stream.Collectors;
 public class MatchingService {
 
     private final ListingRepository listingRepository;
+    private final UserRepository userRepository;
     private final RestTemplate restTemplate;
 
     @Value("${app.matching-service.url:http://localhost:8000}")
     private String matchingServiceUrl;
 
-    @Transactional(readOnly = true)
-    public MatchingResponse findMatchesForListing(UUID listingId, int maxResults, double maxDistanceKm) {
+    @Transactional
+    public MatchingResponse findMatchesForListing(String username, UUID listingId, int maxResults, double maxDistanceKm) {
+        User requester = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
+
         Listing query = listingRepository.findById(listingId)
                 .orElseThrow(() -> new RuntimeException("Listing not found: " + listingId));
 
         String ownerUsername = query.getOwner() != null ? query.getOwner().getUsername() : null;
+        if (!requester.getUserType().equals(User.UserType.ADMIN) && !username.equals(ownerUsername)) {
+            throw new RuntimeException("Vous pouvez lancer le matching uniquement sur vos propres annonces");
+        }
 
         List<Listing> candidates = listingRepository
                 .findAllActive(PageRequest.of(0, 200))
@@ -52,8 +64,11 @@ public class MatchingService {
                     .queryId(listingId.toString())
                     .matches(Collections.emptyList())
                     .totalCandidates(0)
+                    .quota(buildQuotaResponse(requester))
                     .build();
         }
+
+        ensureCanUseMatching(requester);
 
         // Map id → listing pour enrichir les résultats avec le titre
         Map<String, Listing> idToListing = candidates.stream()
@@ -61,6 +76,8 @@ public class MatchingService {
 
         MatchingRequest request = buildMatchingRequest(query, candidates, maxResults, maxDistanceKm);
         MatchingResponse response = callMatchingService(request, listingId.toString());
+        consumeMatchingUsage(requester);
+        response.setQuota(buildQuotaResponse(requester));
 
         // Enrichir chaque résultat avec le titre et l'owner pour affichage frontend
         if (response.getMatches() != null) {
@@ -76,10 +93,12 @@ public class MatchingService {
         return response;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public MatchingResponse getPersonalizedRecommendations(
             String username, List<String> preferredCategories,
             Double lat, Double lon, int maxResults) {
+        User requester = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
 
         List<Listing> allListings = listingRepository
                 .findAllActive(PageRequest.of(0, 200))
@@ -90,8 +109,11 @@ public class MatchingService {
                     .queryId(username)
                     .matches(Collections.emptyList())
                     .totalCandidates(0)
+                    .quota(buildQuotaResponse(requester))
                     .build();
         }
+
+        ensureCanUseMatching(requester);
 
         String userText = preferredCategories.isEmpty()
                 ? "ressources échanges coopération économie circulaire"
@@ -118,7 +140,19 @@ public class MatchingService {
                 .maxDistanceKm(100.0)
                 .build();
 
-        return callMatchingService(request, username);
+        MatchingResponse response = callMatchingService(request, username);
+        consumeMatchingUsage(requester);
+        response.setQuota(buildQuotaResponse(requester));
+        return response;
+    }
+
+    @Transactional
+    public MatchingQuotaResponse getQuota(String username) {
+        User requester = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
+        normalizeSubscription(requester);
+        resetUsageIfNeeded(requester);
+        return buildQuotaResponse(requester);
     }
 
     private MatchingRequest buildMatchingRequest(
@@ -182,5 +216,77 @@ public class MatchingService {
                     .totalCandidates(0)
                     .build();
         }
+    }
+
+    private void ensureCanUseMatching(User user) {
+        normalizeSubscription(user);
+        resetUsageIfNeeded(user);
+        if (isPremiumActive(user)) {
+            return;
+        }
+
+        int quota = user.getMatchingMonthlyQuota() != null ? user.getMatchingMonthlyQuota() : 3;
+        int used = user.getMatchingUsageCount() != null ? user.getMatchingUsageCount() : 0;
+        if (used >= quota) {
+            throw new RuntimeException("Quota matching mensuel atteint. Le plan standard permet 3 analyses IA par mois.");
+        }
+    }
+
+    private void consumeMatchingUsage(User user) {
+        normalizeSubscription(user);
+        resetUsageIfNeeded(user);
+        if (isPremiumActive(user)) {
+            userRepository.save(user);
+            return;
+        }
+
+        int used = user.getMatchingUsageCount() != null ? user.getMatchingUsageCount() : 0;
+        user.setMatchingUsageCount(used + 1);
+        userRepository.save(user);
+    }
+
+    private void resetUsageIfNeeded(User user) {
+        String currentMonth = YearMonth.now().toString();
+        if (!currentMonth.equals(user.getMatchingUsageMonth())) {
+            user.setMatchingUsageMonth(currentMonth);
+            user.setMatchingUsageCount(0);
+        }
+        if (user.getMatchingMonthlyQuota() == null) {
+            user.setMatchingMonthlyQuota(3);
+        }
+    }
+
+    private void normalizeSubscription(User user) {
+        if (user.getSubscriptionPlan() == null) {
+            user.setSubscriptionPlan(User.SubscriptionPlan.STANDARD);
+        }
+        if (user.getSubscriptionPlan() == User.SubscriptionPlan.PREMIUM
+                && user.getPremiumExpiresAt() != null
+                && user.getPremiumExpiresAt().isBefore(LocalDateTime.now())) {
+            user.setSubscriptionPlan(User.SubscriptionPlan.STANDARD);
+        }
+    }
+
+    private boolean isPremiumActive(User user) {
+        return user.getSubscriptionPlan() == User.SubscriptionPlan.PREMIUM
+                && (user.getPremiumExpiresAt() == null || user.getPremiumExpiresAt().isAfter(LocalDateTime.now()));
+    }
+
+    private MatchingQuotaResponse buildQuotaResponse(User user) {
+        normalizeSubscription(user);
+        resetUsageIfNeeded(user);
+        boolean premiumActive = isPremiumActive(user);
+        int quota = user.getMatchingMonthlyQuota() != null ? user.getMatchingMonthlyQuota() : 3;
+        int used = user.getMatchingUsageCount() != null ? user.getMatchingUsageCount() : 0;
+
+        return MatchingQuotaResponse.builder()
+                .subscriptionPlan(user.getSubscriptionPlan().name())
+                .premiumActive(premiumActive)
+                .monthlyQuota(quota)
+                .usedThisMonth(premiumActive ? 0 : used)
+                .remainingThisMonth(premiumActive ? -1 : Math.max(0, quota - used))
+                .usageMonth(user.getMatchingUsageMonth())
+                .premiumExpiresAt(user.getPremiumExpiresAt() != null ? user.getPremiumExpiresAt().toString() : null)
+                .build();
     }
 }

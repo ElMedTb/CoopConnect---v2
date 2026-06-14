@@ -22,6 +22,8 @@ public class MatchingResponse {
     @JsonProperty("total_candidates")
     private int totalCandidates;
 
+    private MatchingQuotaResponse quota;
+
     @Data
     @Builder
     @NoArgsConstructor

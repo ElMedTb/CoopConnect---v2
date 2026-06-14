@@ -1,18 +1,56 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Leaf, Eye, EyeOff, AlertCircle } from 'lucide-react'
 
 export default function Login() {
-  const { login } = useAuth()
+  const { login, googleLogin } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from?.pathname || '/dashboard'
+  const googleButtonRef = useRef(null)
 
   const [form, setForm] = useState({ username: '', password: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+    if (!clientId || !googleButtonRef.current) return
+
+    const renderButton = () => {
+      if (!window.google?.accounts?.id || !googleButtonRef.current) return
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async ({ credential }) => {
+          try {
+            await googleLogin(credential)
+            navigate(from, { replace: true })
+          } catch (err) {
+            setError(err.response?.data?.message || 'Connexion Google impossible.')
+          }
+        },
+      })
+      googleButtonRef.current.innerHTML = ''
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        theme: 'outline',
+        size: 'large',
+        width: 300,
+      })
+    }
+
+    if (window.google?.accounts?.id) {
+      renderButton()
+      return
+    }
+    const script = document.createElement('script')
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.defer = true
+    script.onload = renderButton
+    document.body.appendChild(script)
+  }, [from, googleLogin, navigate])
 
   const handleChange = (e) => {
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }))
@@ -114,6 +152,24 @@ export default function Login() {
               {loading ? 'Connexion...' : 'Se connecter'}
             </button>
           </form>
+
+          <div className="my-5 flex items-center gap-3">
+            <div className="h-px bg-stone-200 flex-1" />
+            <span className="text-xs text-stone-400">ou</span>
+            <div className="h-px bg-stone-200 flex-1" />
+          </div>
+
+          {import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
+            <div ref={googleButtonRef} className="flex justify-center" />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setError('Google Login n est pas configure. Ajoutez VITE_GOOGLE_CLIENT_ID cote frontend et GOOGLE_CLIENT_ID cote auth-service.')}
+              className="btn-secondary w-full justify-center py-2.5"
+            >
+              Continuer avec Google
+            </button>
+          )}
 
           <p className="text-center text-sm text-stone-500 mt-6">
             Pas encore de compte ?{' '}

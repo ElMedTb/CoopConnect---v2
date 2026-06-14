@@ -41,6 +41,10 @@ public class Exchange extends BaseEntity {
     @JoinColumn(name = "listing_id", nullable = false, foreignKey = @ForeignKey(name = "fk_exchange_listing"))
     private Listing listing;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offered_listing_id", foreignKey = @ForeignKey(name = "fk_exchange_offered_listing"))
+    private Listing offeredListing;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ExchangeStatus status = ExchangeStatus.REQUESTED;
@@ -50,6 +54,24 @@ public class Exchange extends BaseEntity {
 
     @Column(name = "response_message", columnDefinition = "TEXT")
     private String responseMessage;
+
+    @Column(name = "requester_qr_token", unique = true, length = 100)
+    private String requesterQrToken;
+
+    @Column(name = "provider_qr_token", unique = true, length = 100)
+    private String providerQrToken;
+
+    @Column(name = "requester_qr_confirmed", nullable = false)
+    private Boolean requesterQrConfirmed = false;
+
+    @Column(name = "provider_qr_confirmed", nullable = false)
+    private Boolean providerQrConfirmed = false;
+
+    @Column(name = "requester_qr_confirmed_at")
+    private LocalDateTime requesterQrConfirmedAt;
+
+    @Column(name = "provider_qr_confirmed_at")
+    private LocalDateTime providerQrConfirmedAt;
 
     @Column(name = "exchange_type", nullable = false)
     private String exchangeType;

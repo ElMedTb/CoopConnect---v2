@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { listingsApi, matchesApi } from '../api/listings'
 import { exchangesApi } from '../api/users'
 import MatchCard, { normalizeMatch } from '../components/listings/MatchCard'
 import {
   MapPin, Clock, User, Edit, Trash2, Sparkles,
-  ArrowLeft, Package, CheckCircle, X, ChevronDown, AlertTriangle
+  ArrowLeft, Package, CheckCircle, X, ChevronDown, AlertTriangle, Mail, Phone
 } from 'lucide-react'
 
 const CATEGORY_LABELS = {
@@ -119,7 +119,7 @@ function ExchangeModal({ listing, onClose, onSuccess }) {
       const msg = message.trim() || (selectedMyListing
         ? `Bonjour, je souhaite échanger "${selectedMyListing.title}" contre votre annonce "${listing.title}".`
         : `Bonjour, votre annonce "${listing.title}" m'intéresse, souhaitez-vous échanger ?`)
-      await exchangesApi.create({ listingId: listing.id, message: msg })
+      await exchangesApi.create({ listingId: listing.id, offeredListingId: selectedMyListing?.id, message: msg })
       onSuccess()
     } catch (err) {
       alert(err.response?.data?.message || "Erreur lors de la demande d'échange.")
@@ -223,6 +223,7 @@ export default function ListingDetail() {
   const { id } = useParams()
   const { user, isAuthenticated } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const [listing, setListing] = useState(null)
   const [matches, setMatches] = useState([])
@@ -298,13 +299,15 @@ export default function ListingDetail() {
   }
 
   const statusConf = STATUS_CONFIG[listing.status] || { label: listing.status, color: 'badge-stone' }
+  const backTo = location.state?.backTo || '/browse'
+  const backLabel = location.state?.backLabel || 'Retour aux annonces'
 
   return (
     <div className="min-h-screen bg-stone-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        <Link to="/browse" className="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-700 mb-6 transition-colors">
+        <Link to={backTo} className="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-700 mb-6 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" />
-          Retour aux annonces
+          {backLabel}
         </Link>
 
         {isOwner ? (
@@ -377,6 +380,12 @@ export default function ListingDetail() {
                     </div>
                     <p className="text-sm font-medium text-stone-900">{listing.ownerName || 'Utilisateur'}</p>
                   </div>
+                  {(listing.ownerEmail || listing.ownerPhoneNumber) && (
+                    <div className="mt-4 space-y-2 text-xs text-stone-600">
+                      {listing.ownerEmail && <p className="flex items-center gap-2"><Mail className="w-3.5 h-3.5" />{listing.ownerEmail}</p>}
+                      {listing.ownerPhoneNumber && <p className="flex items-center gap-2"><Phone className="w-3.5 h-3.5" />{listing.ownerPhoneNumber}</p>}
+                    </div>
+                  )}
                 </div>
                 <div className="card p-5">
                   <h3 className="text-sm font-semibold text-stone-900 mb-4">Détails</h3>
@@ -419,7 +428,7 @@ export default function ListingDetail() {
               ) : (
                 <div className="space-y-3">
                   {matches.map((m, i) => (
-                    <MatchCard key={m.listingId || i} match={m} showExchange={true} myListingTitle={listing.title} />
+                    <MatchCard key={m.listingId || i} match={m} showExchange={true} myListingTitle={listing.title} myListingId={listing.id} />
                   ))}
                 </div>
               )}
@@ -467,6 +476,12 @@ export default function ListingDetail() {
                   </div>
                   <p className="text-sm font-medium text-stone-900">{listing.ownerName || 'Utilisateur'}</p>
                 </div>
+                {(listing.ownerEmail || listing.ownerPhoneNumber) && (
+                  <div className="mb-4 space-y-2 text-xs text-stone-600">
+                    {listing.ownerEmail && <p className="flex items-center gap-2"><Mail className="w-3.5 h-3.5" />{listing.ownerEmail}</p>}
+                    {listing.ownerPhoneNumber && <p className="flex items-center gap-2"><Phone className="w-3.5 h-3.5" />{listing.ownerPhoneNumber}</p>}
+                  </div>
+                )}
                 {isAuthenticated && !exchangeSuccess && listing.status !== 'EXCHANGED' && (
                   <button onClick={() => setShowExchangeModal(true)} className="btn-primary w-full justify-center py-2.5 text-sm">
                     Proposer un échange

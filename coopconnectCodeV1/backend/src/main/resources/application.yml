@@ -1,4 +1,8 @@
 spring:
+  config:
+    import:
+      - optional:file:../local-config.env[.properties]
+      - optional:file:./local-config.env[.properties]
   application:
     name: core-service
   profiles:
@@ -117,7 +121,7 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:h2:mem:coopconnect-core;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=VALUE
+    url: jdbc:h2:file:./data/coopconnect-core;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=VALUE
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -129,7 +133,7 @@ spring:
         web-allow-others: true
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     defer-datasource-initialization: true
     properties:
